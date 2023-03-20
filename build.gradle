@@ -1,0 +1,41 @@
+plugins {
+    id 'org.gradle.java'
+    id 'org.gradle.maven-publish'
+    id 'java'
+}
+
+group 'objects.fill'
+version '0.0.1'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'objects.fill:objects-fill-processor:0.0.1'
+    annotationProcessor 'objects.fill:objects-fill-processor:0.0.1'
+
+    compileOnly 'com.google.auto.service:auto-service:1.0-rc5'
+    annotationProcessor 'com.google.auto.service:auto-service:1.0-rc5'
+    implementation "org.apache.commons:commons-lang3:3.12.0"
+    testImplementation "org.apache.commons:commons-lang3:3.12.0"
+    implementation 'org.reflections:reflections:0.10.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'objects.fill'
+            artifactId = 'objects-fill-processor'
+            version = "0.0.1"
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}
