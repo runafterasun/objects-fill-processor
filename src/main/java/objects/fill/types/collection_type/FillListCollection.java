@@ -1,18 +1,17 @@
 package objects.fill.types.collection_type;
 
 import objects.fill.object_param.FillObjectParams;
+import objects.fill.service.ElementCreationService;
 
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static objects.fill.types.collection_type.utils.FillCollections.fillCollectionStream;
-
 public class FillListCollection implements FillCollectionType {
 
     @Override
     public Object generate(Field field, FillObjectParams fillObjectParams) {
-        return fillCollectionStream(field, fillObjectParams).collect(Collectors.toList());
+        return new ElementCreationService().fillCollectionStream(field, fillObjectParams).collect(Collectors.toList());
     }
 
     @Override

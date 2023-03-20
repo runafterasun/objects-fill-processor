@@ -1,4 +1,4 @@
-package objects.fill.types;
+package objects.fill.types.interfaces;
 
 public interface ClazzType {
 

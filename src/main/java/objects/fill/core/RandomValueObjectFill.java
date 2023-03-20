@@ -1,7 +1,7 @@
 package objects.fill.core;
 
 import objects.fill.object_param.FillObjectParams;
-import objects.fill.service.SingleElementCreationService;
+import objects.fill.service.ElementCreationService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -55,10 +55,8 @@ public class RandomValueObjectFill {
     /**
      * @param fillObjectParams  Специальный объект для передачи объекта наполнения и состояния.
      */
-    @SuppressWarnings("unchecked")
-    private static <T> T fill(FillObjectParams fillObjectParams) {
+    private static void fill(FillObjectParams fillObjectParams) {
         doWithFields(fillObjectParams.getObject().getClass(), new RandomValueFieldSetterCallback(fillObjectParams));
-        return ((T) fillObjectParams.getObject());
     }
 
     /**
@@ -68,7 +66,7 @@ public class RandomValueObjectFill {
      */
     public static <T extends Collection<Object>> void fill(T collection, Class<Object> genericClass) {
         for (int i = 0; i < objectCount; i++) {
-            Object o = new SingleElementCreationService().generateSingleValue(genericClass, getFillObjectParams(genericClass));
+            Object o = new ElementCreationService().generateSingleValue(genericClass, getFillObjectParams(genericClass));
             doWithFields(genericClass, new RandomValueFieldSetterCallback(getFillObjectParams(o)));
             if (o.getClass().isAssignableFrom(genericClass)) {
                 collection.add((o));

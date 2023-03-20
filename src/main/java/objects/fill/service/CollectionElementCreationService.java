@@ -12,8 +12,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import static objects.fill.service.SingleElementCreationService.DEFAULT_LOCAL_CLASS_CREATION_PATH;
-import static objects.fill.service.SingleElementCreationService.findClassInContainer;
+import static objects.fill.service.ElementCreationService.DEFAULT_LOCAL_CLASS_CREATION_PATH;
+import static objects.fill.service.ElementCreationService.findClassInContainer;
 
 /**
  * Фабрика генерации случайных коллекций. Должна проходить по всему дереву зависимостей.
@@ -34,7 +34,7 @@ public class CollectionElementCreationService {
         if(classForCollectionType.isPresent()) {
             return classForCollectionType.get().generate(field, fillObjectParams);
         } else {
-            return new SingleElementCreationService().generateSingleValue(type, fillObjectParams);
+            return new ElementCreationService().generateSingleValue(type, fillObjectParams);
         }
     }
 
