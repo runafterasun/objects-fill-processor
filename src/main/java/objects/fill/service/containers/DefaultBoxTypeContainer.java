@@ -6,11 +6,11 @@ import objects.fill.types.box_type.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BoxTypeContainerImpl implements BoxTypeContainerService {
+public class DefaultBoxTypeContainer implements BoxTypeContainerService {
 
     private final List<FillBoxType> container;
 
-    public BoxTypeContainerImpl() {
+    public DefaultBoxTypeContainer() {
         container = new ArrayList<>();
         container.add(new FillBigDecimal());
         container.add(new FillLong());

@@ -1,9 +1,7 @@
 package objects.fill.types.object_type;
 
-import objects.fill.annotations.ObjectType;
 import objects.fill.object_param.FillObjectParams;
 
-@ObjectType
 public class FillEnum implements FillObjectType {
 
     @Override

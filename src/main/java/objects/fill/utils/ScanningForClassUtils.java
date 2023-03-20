@@ -1,6 +1,5 @@
 package objects.fill.utils;
 
-import objects.fill.service.interfaces.BoxTypeContainerService;
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
@@ -13,7 +12,7 @@ import static org.reflections.scanners.Scanners.TypesAnnotated;
 
 public class ScanningForClassUtils {
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","unused"})
     public static <T extends Annotation, K> List<K> scanProjectForAnnotationAndCastToInterface(Class<T> annotationClazz, Class<K> castInterface) {
         Class<?> aClass = deduceMainApplicationClass();
         assert aClass != null;
@@ -34,7 +33,7 @@ public class ScanningForClassUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<BoxTypeContainerService> scanClassImplInterface(Class<BoxTypeContainerService> castInterface, String packagePath) {
+    public static <T> List<T> scanClassImplInterface(Class<T> castInterface, String packagePath) {
         Reflections reflections = new Reflections(packagePath);
 
         Set<Class<?>> subTypes =
@@ -43,7 +42,7 @@ public class ScanningForClassUtils {
         return subTypes.stream()
                 .map(ss -> {
                     try {
-                        return (BoxTypeContainerService) ss.getConstructor().newInstance();
+                        return (T) ss.getConstructor().newInstance();
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                              NoSuchMethodException e) {
                         throw new RuntimeException(e);

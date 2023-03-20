@@ -18,8 +18,8 @@ public record RandomValueFieldSetterCallback(FillObjectParams fillObjectParams) 
      */
     private static final Function<Field, Function<FillObjectParams, Boolean>> checkExcludedName =
             checkField ->
-            fillObjectParam ->
-                    fillObjectParam.getExcludedFieldName().contains(checkField.getName());
+                    fillObjectParam ->
+                            fillObjectParam.getExcludedFieldName().contains(checkField.getName());
 
     /**
      * Переопределение метода обхода полей
@@ -28,7 +28,7 @@ public record RandomValueFieldSetterCallback(FillObjectParams fillObjectParams) 
     public void doWith(Field field) throws IllegalAccessException {
         if (!Modifier.isFinal(field.getModifiers())) {
             if (!checkExcludedName.apply(field).apply(fillObjectParams)) {
-                Object value = CollectionElementCreationService.generateCollection(field, fillObjectParams);
+                Object value = new CollectionElementCreationService().generateCollection(field, fillObjectParams);
                 if (value != null) {
                     field.setAccessible(true);
                     field.set(fillObjectParams.getObject(), value);

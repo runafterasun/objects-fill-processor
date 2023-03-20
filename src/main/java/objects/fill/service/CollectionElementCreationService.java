@@ -1,23 +1,35 @@
 package objects.fill.service;
 
 import objects.fill.object_param.FillObjectParams;
+import objects.fill.service.containers.DefaultCollectionTypeContainer;
+import objects.fill.service.interfaces.CollectionTypeContainerService;
 import objects.fill.types.collection_type.FillCollectionType;
+import objects.fill.utils.ScanningForClassUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import static objects.fill.service.SingleElementCreationService.DEFAULT_LOCAL_CLASS_CREATION_PATH;
+import static objects.fill.service.SingleElementCreationService.findClassInContainer;
 
 /**
  * Фабрика генерации случайных коллекций. Должна проходить по всему дереву зависимостей.
  * todo Для map не сделан древовидный обход с возможностью заполнения коллекций или других листов.
  */
 public class CollectionElementCreationService {
-    private static List<FillCollectionType> container = new ArrayList<>();
+    private static final List<FillCollectionType> containerCollectionType = new ArrayList<>();
 
-    public static Object generateCollection(Field field, FillObjectParams fillObjectParams) {
+    {
+        containerCollectionType.addAll(new DefaultCollectionTypeContainer().getContainer());
+        findLocalContainerForCollectionType();
+    }
+
+    public Object generateCollection(Field field, FillObjectParams fillObjectParams) {
         Class<?> type = field.getType();
-        Optional<FillCollectionType> classForCollectionType = findClassForCollectionType(type);
+        Optional<FillCollectionType> classForCollectionType = findClassInContainer(type, containerCollectionType);
 
         if(classForCollectionType.isPresent()) {
             return classForCollectionType.get().generate(field, fillObjectParams);
@@ -26,10 +38,12 @@ public class CollectionElementCreationService {
         }
     }
 
-    private static Optional<FillCollectionType> findClassForCollectionType(Class<?> fieldType) {
-        return container
+
+    private void findLocalContainerForCollectionType() {
+        containerCollectionType.addAll(ScanningForClassUtils.scanClassImplInterface(CollectionTypeContainerService.class, DEFAULT_LOCAL_CLASS_CREATION_PATH)
                 .stream()
-                .filter(types -> types.getClazz().isAssignableFrom(fieldType))
-                .findFirst();
+                .map(CollectionTypeContainerService::getContainer)
+                .flatMap(Collection::stream)
+                .toList());
     }
 }

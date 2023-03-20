@@ -7,11 +7,11 @@ public class ClassTemplate {
             #importListOfObject
             import #importInterface
             
-            import objects.fill.service.interfaces.BoxTypeContainerService;
+            #interfaceImplementPath
             import java.util.ArrayList;
             import java.util.List;
                         
-            public class #containerName implements BoxTypeContainerService {
+            public class #containerName implements #interfaceExtension {
                         
                 private List<#interfaceName> container;
                     
@@ -23,7 +23,7 @@ public class ClassTemplate {
                  public List<#interfaceName> getContainer() {
                         return container;
                  }
- 
+
             }
             """;
 }
