@@ -1,5 +1,6 @@
 package objects.fill.object_param;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public final class FillObjectParams {
@@ -18,6 +19,16 @@ public final class FillObjectParams {
      * deep ограничение глубины обхода древа зависимостей или предотвращение циклической зависимости.
      */
     private Integer deep;
+
+    private Type[] genericType;
+
+    public Type[] getGenericType() {
+        return genericType;
+    }
+
+    public void setGenericType(Type[] genericType) {
+        this.genericType = genericType;
+    }
 
     public FillObjectParams setObject(Object object) {
         this.object = object;

@@ -13,10 +13,7 @@ import objects.fill.utils.ScanningForClassUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -43,25 +40,26 @@ public class ElementCreationService {
     }
 
     public Object generateSingleValue(Class<?> fieldType, FillObjectParams fillObjectParams) {
-        Optional<FillBoxType> classForGenerationBoxType = findClassInContainer(fieldType, containerBoxType);
+        Class<?> collectionGenericType = getCollectionGenericType(fieldType, fillObjectParams);
+
+        Optional<FillBoxType> classForGenerationBoxType = findClassInContainer(collectionGenericType, containerBoxType);
         if (classForGenerationBoxType.isPresent()) {
             return classForGenerationBoxType.get().generate(fillObjectParams);
         }
 
-        Optional<FillObjectType> classForGenerationObjectType = findClassInContainer(fieldType, containerObjectType);
+        Optional<FillObjectType> classForGenerationObjectType = findClassInContainer(collectionGenericType, containerObjectType);
         if (classForGenerationObjectType.isPresent()) {
-            return classForGenerationObjectType.get().generate(fieldType, fillObjectParams);
+            return classForGenerationObjectType.get().generate(collectionGenericType, fillObjectParams);
         }
 
-        return createInstance(fieldType, fillObjectParams);
+        return createInstance(collectionGenericType, fillObjectParams);
     }
 
-    public Stream<?> fillCollectionStream(Field field, FillObjectParams fillObjectParams)  {
+    public Stream<?> fillCollectionStream(Field field, FillObjectParams fillObjectParams) {
         ParameterizedType listType = (ParameterizedType) field.getGenericType();
         Optional<Type> genericCollectionType = Stream.of(listType.getActualTypeArguments()).findFirst();
-
-        if(genericCollectionType.isPresent()) {
-            Class<?> collectionGenericType = (Class<?>) genericCollectionType.get();
+        if (genericCollectionType.isPresent()) {
+            Class<?> collectionGenericType = getCollectionGenericType(genericCollectionType.get(), fillObjectParams);
 
             Optional<FillBoxType> classForGenerationBoxType = findClassInContainer(collectionGenericType, containerBoxType);
             if (classForGenerationBoxType.isPresent()) {
@@ -72,9 +70,30 @@ public class ElementCreationService {
             if (classForGenerationObjectType.isPresent()) {
                 return classForGenerationObjectType.get().fillStream(collectionGenericType);
             }
+
             return fillInnerStream(collectionGenericType, fillObjectParams);
+
         }
         return Stream.empty();
+    }
+
+    private Class<?> getCollectionGenericType(Type genericCollectionType, FillObjectParams fillObjectParams) {
+        try {
+            //Добавил такую кривую проверку так как идет извлечение типов. А все объекты являются по умолчанию наследниками java.lang.Object
+            if(genericCollectionType.getTypeName().equals("java.lang.Object")) {
+               return getGenericClass(fillObjectParams);
+            }
+            return (Class<?>) genericCollectionType;
+        } catch (Exception ex) {
+            return getGenericClass(fillObjectParams);
+        }
+    }
+
+    private static Class<?> getGenericClass(FillObjectParams fillObjectParams) {
+        return (Class<?>) Arrays
+                .stream(fillObjectParams.getGenericType())
+                .findFirst()
+                .orElse(null);
     }
 
     public static <T extends ClazzType> Optional<T> findClassInContainer(Class<?> fieldType, List<T> container) {
