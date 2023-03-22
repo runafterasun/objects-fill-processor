@@ -4,6 +4,7 @@ import objects.fill.object_param.FillObjectParams;
 import objects.fill.service.ElementCreationService;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,39 +19,32 @@ import static objects.fill.utils.FieldUtils.doWithFields;
 public class RandomValueObjectFill {
 
     /**
-     * Количество объектов созданных в коллекции.
+     * @param object объект для заполнения тестовыми данными.
      */
-    public static int objectCount = 5;
-
-    /**
-     * Количество символов для случайной генерации.
-     */
-    public static int valueLength = 5;
-
-    /**
-     * Глубина дерева классов.
-     */
-    public static int fillDeep = 3;
+    public static <T> T fill(T object) {
+        return fillWithGeneric(object, null);
+    }
 
     /**
      * @param object объект для заполнения тестовыми данными.
+     * @param genericClass класс для обобщений
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T fill(T object) {
+    public static <T, K> T fillWithGeneric(T object, Class<K> genericClass) {
         FillObjectParams fillObjectParams = getFillObjectParams(object);
-        doWithFields(fillObjectParams.getObject().getClass(), new RandomValueFieldSetterCallback(fillObjectParams));
-        return ((T) fillObjectParams.getObject());
+        if(genericClass != null) {
+            fillObjectParams.setGenericType(new Type[]{genericClass});
+        }
+        return fillTheField(fillObjectParams);
     }
+
 
     /**
      * @param objectClass класс объекта для заполнения тестовыми данными.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T fill(Class<T> objectClass) {
         FillObjectParams fillObjectParams = getFillObjectParams(objectClass);
         if(fillObjectParams != null) {
-            doWithFields(fillObjectParams.getObject().getClass(), new RandomValueFieldSetterCallback(fillObjectParams));
-            return ((T) fillObjectParams.getObject());
+            return fillTheField(fillObjectParams);
         }
         return null;
     }
@@ -59,18 +53,15 @@ public class RandomValueObjectFill {
      * @param object            объект для заполнения тестовыми данными.
      * @param excludedFieldName список полей которые заполнять не надо.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T fill(T object, List<String> excludedFieldName) {
         FillObjectParams fillObjectParams = getFillObjectParams(object, excludedFieldName);
-        doWithFields(fillObjectParams.getObject().getClass(), new RandomValueFieldSetterCallback(fillObjectParams));
-        return ((T) fillObjectParams.getObject());
+        return fillTheField(fillObjectParams);
     }
 
-    /**
-     * @param fillObjectParams Специальный объект для передачи объекта наполнения и состояния.
-     */
-    private static void fill(FillObjectParams fillObjectParams) {
+    @SuppressWarnings("unchecked")
+    private static <T> T fillTheField(FillObjectParams fillObjectParams) {
         doWithFields(fillObjectParams.getObject().getClass(), new RandomValueFieldSetterCallback(fillObjectParams));
+        return ((T) fillObjectParams.getObject());
     }
 
     /**
@@ -80,13 +71,20 @@ public class RandomValueObjectFill {
      */
     @SuppressWarnings({"unchecked", "unused"})
     public static <T extends Collection<K>, K> void fillCollection(T collection, Class<K> genericClass) {
-        for (int i = 0; i < objectCount; i++) {
+        for (int i = 0; i < GlobalParameters.objectCount.getValue(); i++) {
             K o = (K) new ElementCreationService().generateSingleValue(genericClass, getFillObjectParams(genericClass));
             doWithFields(genericClass, new RandomValueFieldSetterCallback(getFillObjectParams(o)));
             if (o.getClass().isAssignableFrom(genericClass)) {
                 collection.add((o));
             }
         }
+    }
+
+    /**
+     * @param fillObjectParams Специальный объект для передачи объекта наполнения и состояния.
+     */
+    private static void fill(FillObjectParams fillObjectParams) {
+        doWithFields(fillObjectParams.getObject().getClass(), new RandomValueFieldSetterCallback(fillObjectParams));
     }
 
     /**
@@ -112,20 +110,11 @@ public class RandomValueObjectFill {
      * @param excludedFieldName список полей которые заполнять не надо.
      */
     private static <T> FillObjectParams getFillObjectParams(T object, List<String> excludedFieldName) {
-        return getFillObjectParams(object, excludedFieldName, fillDeep);
-    }
-
-    /**
-     * @param object            создаем специальный объект для передачи объекта наполнения и состояния.
-     * @param excludedFieldName список полей которые заполнять не надо.
-     * @param deep              глубина дерева классов.
-     */
-    private static <T> FillObjectParams getFillObjectParams(T object, List<String> excludedFieldName, Integer deep) {
         try {
             return new FillObjectParams()
                     .setObject(object.getClass().getDeclaredConstructor().newInstance())
                     .setExcludedFieldName(excludedFieldName)
-                    .setDeep(deep);
+                    .setDeep(GlobalParameters.fillDeep.getValue());
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
                  InvocationTargetException e) {
             throw new RuntimeException(e);
@@ -135,20 +124,20 @@ public class RandomValueObjectFill {
     /**
      * @param vClass           класс поле из объекта наполнения.
      * @param fillObjectParams специальный объект для передачи объекта наполнения и состояния.
-     *                         <p>
-     *                         Тут мы возвращаем null так как если объект создать нельзя или нужная глубина достигнута то в поле мы просто записываем null;
+     *
+     * Тут мы возвращаем null так как если объект создать нельзя или нужная глубина достигнута то в поле мы просто записываем null;
      */
     @SuppressWarnings("unchecked")
-    public static <V> V createInstance(Class<V> vClass, FillObjectParams fillObjectParams) {
+    public static <T> T createInstance(Class<T> vClass, FillObjectParams fillObjectParams) {
         try {
-            V v = vClass.getDeclaredConstructor().newInstance();
+            T v = vClass.getDeclaredConstructor().newInstance();
             FillObjectParams fillObjectParamsNextNode = getFillObjectParams(v, fillObjectParams.getExcludedFieldName());
             Integer deep = fillObjectParams.getDeep();
             if (deep > 0) {
                 fillObjectParamsNextNode.setDeep(--deep);
                 fillObjectParamsNextNode.setGenericType(fillObjectParams.getGenericType());
                 fill(fillObjectParamsNextNode);
-                return (V) fillObjectParamsNextNode.getObject();
+                return (T) fillObjectParamsNextNode.getObject();
             }
             return null;
         } catch (Exception ignored) {

@@ -1,19 +1,18 @@
 package objects.fill.types.box_type;
 
+import objects.fill.core.GlobalParameters;
 import objects.fill.object_param.FillObjectParams;
 
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static objects.fill.core.RandomValueObjectFill.objectCount;
-import static objects.fill.core.RandomValueObjectFill.valueLength;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static objects.fill.utils.RandomGenerator.*;
 
 public class FillString implements FillBoxType {
 
     @Override
     public Object generate(FillObjectParams fillObjectParams) {
-        return randomAlphabetic(valueLength);
+        return randomAlphabet();
     }
 
     @Override
@@ -24,7 +23,7 @@ public class FillString implements FillBoxType {
     @Override
     public Stream<Object> fillStream() {
         return IntStream
-                .range(0, objectCount)
-                .mapToObj(i -> randomAlphabetic(valueLength));
+                .range(0, GlobalParameters.objectCount.getValue())
+                .mapToObj(i -> randomAlphabet());
     }
 }

@@ -1,11 +1,10 @@
 package objects.fill.types.object_type;
 
+import objects.fill.core.GlobalParameters;
 import objects.fill.object_param.FillObjectParams;
 
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import static objects.fill.core.RandomValueObjectFill.objectCount;
 
 
 public class FillEnum implements FillObjectType {
@@ -25,7 +24,7 @@ public class FillEnum implements FillObjectType {
     @Override
     public Stream<Object> fillStream(Class<?> collectionGenericType) {
         return IntStream
-                .range(0, objectCount)
+                .range(0, GlobalParameters.objectCount.getValue())
                 .mapToObj(i -> {
                     Object[] enumValues = collectionGenericType.getEnumConstants();
                     return enumValues[(int) Math.floor(Math.random() * enumValues.length)];

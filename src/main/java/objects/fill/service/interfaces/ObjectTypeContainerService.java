@@ -2,9 +2,7 @@ package objects.fill.service.interfaces;
 
 import objects.fill.types.object_type.FillObjectType;
 
-import java.util.List;
 
-public interface ObjectTypeContainerService {
+public interface ObjectTypeContainerService extends MainContainerService<FillObjectType> {
 
-    List<FillObjectType> getContainer();
 }

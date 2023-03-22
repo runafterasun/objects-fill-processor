@@ -1,5 +1,6 @@
 package objects.fill.service;
 
+import objects.fill.core.GlobalParameters;
 import objects.fill.object_param.FillObjectParams;
 import objects.fill.service.containers.DefaultBoxTypeContainer;
 import objects.fill.service.containers.DefaultObjectTypeContainer;
@@ -18,7 +19,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static objects.fill.core.RandomValueObjectFill.createInstance;
-import static objects.fill.core.RandomValueObjectFill.objectCount;
 
 /**
  * Фабрика генерации случайных значений. Должна проходить по всему дереву зависимостей.
@@ -56,25 +56,34 @@ public class ElementCreationService {
     }
 
     public Stream<?> fillCollectionStream(Field field, FillObjectParams fillObjectParams) {
+
         ParameterizedType listType = (ParameterizedType) field.getGenericType();
         Optional<Type> genericCollectionType = Stream.of(listType.getActualTypeArguments()).findFirst();
+
         if (genericCollectionType.isPresent()) {
-            Class<?> collectionGenericType = getCollectionGenericType(genericCollectionType.get(), fillObjectParams);
+            try {
+                Class<?> collectionGenericType = getCollectionGenericType(genericCollectionType.get(), fillObjectParams);
 
-            Optional<FillBoxType> classForGenerationBoxType = findClassInContainer(collectionGenericType, containerBoxType);
-            if (classForGenerationBoxType.isPresent()) {
-                return classForGenerationBoxType.get().fillStream();
+                return generateCollectionByClassType(fillObjectParams, collectionGenericType);
+            } catch (Exception ex) {
+                return Stream.empty();
             }
-
-            Optional<FillObjectType> classForGenerationObjectType = findClassInContainer(collectionGenericType, containerObjectType);
-            if (classForGenerationObjectType.isPresent()) {
-                return classForGenerationObjectType.get().fillStream(collectionGenericType);
-            }
-
-            return fillInnerStream(collectionGenericType, fillObjectParams);
-
         }
         return Stream.empty();
+    }
+
+    private Stream<?> generateCollectionByClassType(FillObjectParams fillObjectParams, Class<?> collectionGenericType) {
+        Optional<FillBoxType> classForGenerationBoxType = findClassInContainer(collectionGenericType, containerBoxType);
+        if (classForGenerationBoxType.isPresent()) {
+            return classForGenerationBoxType.get().fillStream();
+        }
+
+        Optional<FillObjectType> classForGenerationObjectType = findClassInContainer(collectionGenericType, containerObjectType);
+        if (classForGenerationObjectType.isPresent()) {
+            return classForGenerationObjectType.get().fillStream(collectionGenericType);
+        }
+
+        return fillInnerStream(collectionGenericType, fillObjectParams);
     }
 
     private Class<?> getCollectionGenericType(Type genericCollectionType, FillObjectParams fillObjectParams) {
@@ -105,7 +114,7 @@ public class ElementCreationService {
 
     private <V> Stream<V> fillInnerStream(Class<V> vClass, FillObjectParams fillObjectParams) {
         return IntStream
-                .range(0, objectCount)
+                .range(0, GlobalParameters.objectCount.getValue())
                 .mapToObj(i -> createInstance(vClass, fillObjectParams));
     }
 
