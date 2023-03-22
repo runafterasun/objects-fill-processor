@@ -8,10 +8,6 @@ import static org.apache.commons.lang3.ArrayUtils.EMPTY_FIELD_ARRAY;
 
 public class FieldUtils {
 
-    private FieldUtils() {
-        throw new IllegalStateException("Utility class");
-    }
-
     private static final Map<Class<?>, Field[]> declaredFieldsCache = new ConcurrentHashMap<>(256);
 
     public static void doWithFields(Class<?> clazz, FieldCallback fc) {

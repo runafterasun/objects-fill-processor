@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static objects.fill.core.RandomValueFill.createInstance;
+import static objects.fill.core.RandomValueObjectFill.createInstance;
 
 /**
  * Фабрика генерации случайных значений. Должна проходить по всему дереву зависимостей.
