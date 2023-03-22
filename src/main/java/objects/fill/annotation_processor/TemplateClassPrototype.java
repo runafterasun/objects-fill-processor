@@ -5,13 +5,22 @@ import java.util.Map;
 
 public final class TemplateClassPrototype {
 
+    private static final String INTERFACE_NAME = "#interfaceName";
+    private static final String IMPORT_INTERFACE = "#interfaceName";
+    private static final String INTERFACE_EXTENSION = "#interfaceName";
+    private static final String INTERFACE_IMPLEMENT_PATH = "#interfaceName";
+
+    private TemplateClassPrototype() {
+        throw new IllegalStateException("Utility class");
+    }
+
     private static Map<String, String> getBoxTypeClassCreationParameters() {
         Map<String, String> templateReplaceParameters = new HashMap<>();
 
-        templateReplaceParameters.put("#interfaceName", "FillBoxType");
-        templateReplaceParameters.put("#importInterface", "objects.fill.types.box_type.FillBoxType;");
-        templateReplaceParameters.put("#interfaceExtension", "BoxTypeContainerService");
-        templateReplaceParameters.put("#interfaceImplementPath", "import objects.fill.service.interfaces.BoxTypeContainerService;");
+        templateReplaceParameters.put(INTERFACE_NAME, "FillBoxType");
+        templateReplaceParameters.put(IMPORT_INTERFACE, "objects.fill.types.box_type.FillBoxType;");
+        templateReplaceParameters.put(INTERFACE_EXTENSION, "BoxTypeContainerService");
+        templateReplaceParameters.put(INTERFACE_IMPLEMENT_PATH, "import objects.fill.service.interfaces.BoxTypeContainerService;");
 
         return templateReplaceParameters;
     }
@@ -19,10 +28,10 @@ public final class TemplateClassPrototype {
     private static Map<String, String> getObjectTypeClassCreationParameters() {
         Map<String, String> templateReplaceParameters = new HashMap<>();
 
-        templateReplaceParameters.put("#interfaceName", "FillObjectType");
-        templateReplaceParameters.put("#importInterface", "objects.fill.types.object_type.FillObjectType;");
-        templateReplaceParameters.put("#interfaceExtension", "ObjectTypeContainerService");
-        templateReplaceParameters.put("#interfaceImplementPath", "import objects.fill.service.interfaces.ObjectTypeContainerService;");
+        templateReplaceParameters.put(INTERFACE_NAME, "FillObjectType");
+        templateReplaceParameters.put(IMPORT_INTERFACE, "objects.fill.types.object_type.FillObjectType;");
+        templateReplaceParameters.put(INTERFACE_EXTENSION, "ObjectTypeContainerService");
+        templateReplaceParameters.put(INTERFACE_IMPLEMENT_PATH, "import objects.fill.service.interfaces.ObjectTypeContainerService;");
 
         return templateReplaceParameters;
     }
@@ -30,10 +39,10 @@ public final class TemplateClassPrototype {
     private static Map<String, String> getCollectionTypeClassCreationParameters() {
         Map<String, String> templateReplaceParameters = new HashMap<>();
 
-        templateReplaceParameters.put("#interfaceName", "FillCollectionType");
-        templateReplaceParameters.put("#importInterface", "objects.fill.types.collection_type.FillCollectionType;");
-        templateReplaceParameters.put("#interfaceExtension", "CollectionTypeContainerService");
-        templateReplaceParameters.put("#interfaceImplementPath", "import objects.fill.service.interfaces.CollectionTypeContainerService;");
+        templateReplaceParameters.put(INTERFACE_NAME, "FillCollectionType");
+        templateReplaceParameters.put(IMPORT_INTERFACE, "objects.fill.types.collection_type.FillCollectionType;");
+        templateReplaceParameters.put(INTERFACE_EXTENSION, "CollectionTypeContainerService");
+        templateReplaceParameters.put(INTERFACE_IMPLEMENT_PATH, "import objects.fill.service.interfaces.CollectionTypeContainerService;");
 
         return templateReplaceParameters;
     }
