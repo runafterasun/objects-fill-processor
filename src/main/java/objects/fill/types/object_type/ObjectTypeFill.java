@@ -4,7 +4,7 @@ import objects.fill.object_param.FillObjectParams;
 import objects.fill.types.interfaces.ClazzType;
 import objects.fill.types.interfaces.ObjectCollectionFillExtension;
 
-public interface FillObjectType extends ClazzType, ObjectCollectionFillExtension {
+public interface ObjectTypeFill extends ClazzType, ObjectCollectionFillExtension {
 
     Object generate(Class<?> fieldType, FillObjectParams fillObjectParams);
 

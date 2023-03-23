@@ -1,31 +1,29 @@
-package objects.fill.types.primitive_type;
+package objects.fill.types.box_type;
 
 import objects.fill.core.GlobalParameters;
 import objects.fill.object_param.FillObjectParams;
-import objects.fill.types.box_type.BoxTypeFill;
 
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static objects.fill.utils.RandomGenerator.randomNum;
+import static objects.fill.utils.RandomGenerator.*;
 
-public class PrimitiveDouble implements BoxTypeFill {
-
+public class CharacterFill implements BoxTypeFill {
     @Override
     public Object generate(FillObjectParams fillObjectParams) {
-        return Double.parseDouble(randomNum());
-    }
-
-    @Override
-    public Class<?> getClazz() {
-        return double.class;
+        return randomAlphabet().charAt(0);
     }
 
     @Override
     public Stream<Object> fillStream() {
         return IntStream
                 .range(0, GlobalParameters.objectCount.getValue())
-                .mapToObj(i -> Double.parseDouble(randomNum()));
+                .mapToObj(i -> randomAlphabet().charAt(0));
+    }
+
+    @Override
+    public Class<?> getClazz() {
+        return Character.class;
     }
 
     @Override

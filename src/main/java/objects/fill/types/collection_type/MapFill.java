@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  *
  * */
-public class FillMap implements FillCollectionType {
+public class MapFill implements CollectionTypeFill {
 
     @Override
     public Object generate(Field field, FillObjectParams fillObjectParams) {
@@ -39,5 +39,18 @@ public class FillMap implements FillCollectionType {
         }
 
         return map;
+    }
+
+    @Override
+    public int hashCode() {
+        return getClazz().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof CollectionTypeFill collectionTypeFill) {
+            return this.getClazz().equals(collectionTypeFill.getClazz());
+        }
+        return false;
     }
 }

@@ -1,23 +1,23 @@
 package objects.fill.service.containers;
 
 import objects.fill.service.interfaces.ObjectTypeContainerService;
-import objects.fill.types.object_type.FillEnum;
-import objects.fill.types.object_type.FillObjectType;
+import objects.fill.types.object_type.EnumFill;
+import objects.fill.types.object_type.ObjectTypeFill;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultObjectTypeContainer implements ObjectTypeContainerService {
 
-    private final List<FillObjectType> container;
+    private final List<ObjectTypeFill> container;
 
     public DefaultObjectTypeContainer() {
         container = new ArrayList<>();
-        container.add(new FillEnum());
+        container.add(new EnumFill());
 
     }
 
-    public List<FillObjectType> getContainer() {
+    public List<ObjectTypeFill> getContainer() {
         return container;
     }
 

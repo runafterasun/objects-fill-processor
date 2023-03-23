@@ -9,28 +9,28 @@ import java.util.List;
 
 public class DefaultBoxTypeContainer implements BoxTypeContainerService {
 
-    private final List<FillBoxType> container;
+    private final List<BoxTypeFill> container;
 
     public DefaultBoxTypeContainer() {
         container = new ArrayList<>();
-        container.add(new FillBigDecimal());
-        container.add(new FillLong());
-        container.add(new FillInteger());
-        container.add(new FillBoolean());
-        container.add(new FillDouble());
-        container.add(new FillDate());
-        container.add(new FillString());
-        container.add(new FillUUID());
+        container.add(new BigDecimalFill());
+        container.add(new LongFill());
+        container.add(new IntegerFill());
+        container.add(new BooleanFill());
+        container.add(new DoubleFill());
+        container.add(new DateFill());
+        container.add(new StringFill());
+        container.add(new UUIDFill());
         container.add(new PrimitiveInt());
         container.add(new PrimitiveLong());
         container.add(new PrimitiveDouble());
         container.add(new PrimitiveBoolean());
-        container.add(new FillCharacter());
+        container.add(new CharacterFill());
         container.add(new PrimitiveChar());
 
     }
 
-    public List<FillBoxType> getContainer() {
+    public List<BoxTypeFill> getContainer() {
         return container;
     }
 

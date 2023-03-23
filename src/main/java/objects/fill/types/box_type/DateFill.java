@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import static objects.fill.utils.RandomGenerator.generateRandomDate;
 
-public class FillDate implements FillBoxType {
+public class DateFill implements BoxTypeFill {
 
     @Override
     public Object generate(FillObjectParams fillObjectParams) {
@@ -28,5 +28,17 @@ public class FillDate implements FillBoxType {
                 .mapToObj(i -> generateRandomDate());
     }
 
+    @Override
+    public int hashCode() {
+        return getClazz().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof BoxTypeFill boxTypeFill) {
+            return this.getClazz().equals(boxTypeFill.getClazz());
+        }
+        return false;
+    }
 
 }

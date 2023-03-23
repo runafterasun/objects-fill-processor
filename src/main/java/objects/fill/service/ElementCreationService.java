@@ -1,14 +1,15 @@
 package objects.fill.service;
 
 import objects.fill.core.GlobalParameters;
+import objects.fill.core.RandomValueFieldSetterCallback;
 import objects.fill.object_param.FillObjectParams;
 import objects.fill.service.containers.DefaultBoxTypeContainer;
 import objects.fill.service.containers.DefaultObjectTypeContainer;
 import objects.fill.service.interfaces.BoxTypeContainerService;
 import objects.fill.service.interfaces.ObjectTypeContainerService;
 import objects.fill.types.interfaces.ClazzType;
-import objects.fill.types.box_type.FillBoxType;
-import objects.fill.types.object_type.FillObjectType;
+import objects.fill.types.box_type.BoxTypeFill;
+import objects.fill.types.object_type.ObjectTypeFill;
 import objects.fill.utils.ScanningForClassUtils;
 
 import java.lang.reflect.Field;
@@ -18,36 +19,37 @@ import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static objects.fill.core.RandomValueObjectFill.createInstance;
+import static objects.fill.core.ObjectFillWithRandomValue.getFillObjectParams;
+import static objects.fill.utils.FieldUtils.doWithFields;
 
 /**
  * Фабрика генерации случайных значений. Должна проходить по всему дереву зависимостей.
  */
 public class ElementCreationService {
 
-    private final List<FillBoxType> containerBoxType = new ArrayList<>();
+    private final Set<BoxTypeFill> containerBoxType = new HashSet<>();
 
-    private final List<FillObjectType> containerObjectType = new ArrayList<>();
+    private final Set<ObjectTypeFill> containerObjectType = new HashSet<>();
 
-    public static final String DEFAULT_LOCAL_CLASS_CREATION_PATH = "object.fill";
+    public static final String DEFAULT_LOCAL_CLASS_CREATION_PATH = "generated.fill";
 
-    {
-        this.containerBoxType.addAll(new DefaultBoxTypeContainer().getContainer());
+    public ElementCreationService() {
         findLocalContainerForBoxType();
+        this.containerBoxType.addAll(new DefaultBoxTypeContainer().getContainer());
 
-        this.containerObjectType.addAll(new DefaultObjectTypeContainer().getContainer());
         findLocalContainerForObjectType();
+        this.containerObjectType.addAll(new DefaultObjectTypeContainer().getContainer());
     }
 
     public Object generateSingleValue(Class<?> fieldType, FillObjectParams fillObjectParams) {
         Class<?> collectionGenericType = getCollectionGenericType(fieldType, fillObjectParams);
 
-        Optional<FillBoxType> classForGenerationBoxType = findClassInContainer(collectionGenericType, containerBoxType);
+        Optional<BoxTypeFill> classForGenerationBoxType = findClassInContainer(collectionGenericType, containerBoxType);
         if (classForGenerationBoxType.isPresent()) {
             return classForGenerationBoxType.get().generate(fillObjectParams);
         }
 
-        Optional<FillObjectType> classForGenerationObjectType = findClassInContainer(collectionGenericType, containerObjectType);
+        Optional<ObjectTypeFill> classForGenerationObjectType = findClassInContainer(collectionGenericType, containerObjectType);
         if (classForGenerationObjectType.isPresent()) {
             return classForGenerationObjectType.get().generate(collectionGenericType, fillObjectParams);
         }
@@ -73,12 +75,12 @@ public class ElementCreationService {
     }
 
     private Stream<?> generateCollectionByClassType(FillObjectParams fillObjectParams, Class<?> collectionGenericType) {
-        Optional<FillBoxType> classForGenerationBoxType = findClassInContainer(collectionGenericType, containerBoxType);
+        Optional<BoxTypeFill> classForGenerationBoxType = findClassInContainer(collectionGenericType, containerBoxType);
         if (classForGenerationBoxType.isPresent()) {
             return classForGenerationBoxType.get().fillStream();
         }
 
-        Optional<FillObjectType> classForGenerationObjectType = findClassInContainer(collectionGenericType, containerObjectType);
+        Optional<ObjectTypeFill> classForGenerationObjectType = findClassInContainer(collectionGenericType, containerObjectType);
         if (classForGenerationObjectType.isPresent()) {
             return classForGenerationObjectType.get().fillStream(collectionGenericType);
         }
@@ -105,7 +107,7 @@ public class ElementCreationService {
                 .orElse(null);
     }
 
-    public static <T extends ClazzType> Optional<T> findClassInContainer(Class<?> fieldType, List<T> container) {
+    public static <T extends ClazzType> Optional<T> findClassInContainer(Class<?> fieldType, Set<T> container) {
         return container
                 .stream()
                 .filter(types -> types.getClazz().isAssignableFrom(fieldType))
@@ -132,5 +134,36 @@ public class ElementCreationService {
                 .map(ObjectTypeContainerService::getContainer)
                 .flatMap(Collection::stream)
                 .toList());
+    }
+
+    /**
+     * @param vClass           класс поле из объекта наполнения.
+     * @param fillObjectParams специальный объект для передачи объекта наполнения и состояния.
+     *
+     * Тут мы возвращаем null так как если объект создать нельзя или нужная глубина достигнута то в поле мы просто записываем null;
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T createInstance(Class<T> vClass, FillObjectParams fillObjectParams) {
+        try {
+            T v = vClass.getDeclaredConstructor().newInstance();
+            FillObjectParams fillObjectParamsNextNode = getFillObjectParams(v, fillObjectParams.getExcludedFieldName());
+            Integer deep = fillObjectParams.getDeep();
+            if (deep > 0) {
+                fillObjectParamsNextNode.setDeep(--deep);
+                fillObjectParamsNextNode.setGenericType(fillObjectParams.getGenericType());
+                fill(fillObjectParamsNextNode);
+                return (T) fillObjectParamsNextNode.getObject();
+            }
+            return null;
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * @param fillObjectParams Специальный объект для передачи объекта наполнения и состояния.
+     */
+    private static void fill(FillObjectParams fillObjectParams) {
+        doWithFields(fillObjectParams.getObject().getClass(), new RandomValueFieldSetterCallback(fillObjectParams));
     }
 }

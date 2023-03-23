@@ -2,8 +2,12 @@ package objects.fill.template;
 
 public class ClassTemplate {
 
-    public static final String classContainerTemplate = """
-            package object.fill;
+    private ClassTemplate() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    public static final String CLASS_CONTAINER_TEMPLATE = """
+            package generated.fill;
             #importListOfObject
             import #importInterface
             

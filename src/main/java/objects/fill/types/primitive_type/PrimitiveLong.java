@@ -2,14 +2,14 @@ package objects.fill.types.primitive_type;
 
 import objects.fill.core.GlobalParameters;
 import objects.fill.object_param.FillObjectParams;
-import objects.fill.types.box_type.FillBoxType;
+import objects.fill.types.box_type.BoxTypeFill;
 
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static objects.fill.utils.RandomGenerator.randomNum;
 
-public class PrimitiveLong implements FillBoxType {
+public class PrimitiveLong implements BoxTypeFill {
 
     @Override
     public Object generate(FillObjectParams fillObjectParams) {
@@ -26,5 +26,18 @@ public class PrimitiveLong implements FillBoxType {
         return IntStream
                 .range(0, GlobalParameters.objectCount.getValue())
                 .mapToObj(i -> Long.parseLong(randomNum()));
+    }
+
+    @Override
+    public int hashCode() {
+        return getClazz().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof BoxTypeFill boxTypeFill) {
+            return this.getClazz().equals(boxTypeFill.getClazz());
+        }
+        return false;
     }
 }

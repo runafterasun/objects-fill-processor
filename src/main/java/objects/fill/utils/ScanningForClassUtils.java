@@ -12,6 +12,10 @@ import static org.reflections.scanners.Scanners.TypesAnnotated;
 
 public class ScanningForClassUtils {
 
+    private ScanningForClassUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     @SuppressWarnings({"unchecked","unused"})
     public static <T extends Annotation, K> List<K> scanProjectForAnnotationAndCastToInterface(Class<T> annotationClazz, Class<K> castInterface) {
         Class<?> aClass = deduceMainApplicationClass();

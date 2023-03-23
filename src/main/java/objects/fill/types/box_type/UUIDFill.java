@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 
-public class FillUUID implements FillBoxType {
+public class UUIDFill implements BoxTypeFill {
 
     @Override
     public Object generate(FillObjectParams fillObjectParams) {
@@ -25,5 +25,18 @@ public class FillUUID implements FillBoxType {
         return IntStream
                 .range(0, GlobalParameters.objectCount.getValue())
                 .mapToObj(i -> UUID.randomUUID());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClazz().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof BoxTypeFill boxTypeFill) {
+            return this.getClazz().equals(boxTypeFill.getClazz());
+        }
+        return false;
     }
 }

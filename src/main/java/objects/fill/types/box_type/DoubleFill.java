@@ -8,22 +8,35 @@ import java.util.stream.Stream;
 
 import static objects.fill.utils.RandomGenerator.*;
 
-public class FillLong implements FillBoxType {
+public class DoubleFill implements BoxTypeFill {
 
     @Override
     public Object generate(FillObjectParams fillObjectParams) {
-        return Long.parseLong(randomNum());
+        return Double.parseDouble(randomNum());
     }
 
     @Override
     public Class<?> getClazz() {
-        return Long.class;
+        return Double.class;
     }
 
     @Override
     public Stream<Object> fillStream() {
         return IntStream
                 .range(0, GlobalParameters.objectCount.getValue())
-                .mapToObj(i -> Long.parseLong(randomNum()));
+                .mapToObj(i -> Double.parseDouble(randomNum()));
+    }
+
+    @Override
+    public int hashCode() {
+        return getClazz().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof BoxTypeFill boxTypeFill) {
+            return this.getClazz().equals(boxTypeFill.getClazz());
+        }
+        return false;
     }
 }

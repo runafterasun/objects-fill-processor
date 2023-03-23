@@ -5,7 +5,7 @@ import objects.fill.types.interfaces.ClazzType;
 
 import java.lang.reflect.Field;
 
-public interface FillCollectionType extends ClazzType {
+public interface CollectionTypeFill extends ClazzType {
 
     Object generate(Field field, FillObjectParams fillObjectParams);
 
