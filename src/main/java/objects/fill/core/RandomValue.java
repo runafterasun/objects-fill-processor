@@ -2,6 +2,7 @@ package objects.fill.core;
 
 import objects.fill.object_param.Fill;
 import objects.fill.service.ElementCreationService;
+import objects.fill.types.array.FillArray;
 
 import java.util.Collection;
 
@@ -38,6 +39,14 @@ public final class RandomValue {
                 collection.add((o));
             }
         }
+    }
+
+    /**
+     * @param fill объект содержащий всю информацию по файлу.
+     */
+    @SuppressWarnings({"unchecked", "unused"})
+    public static <T> T[] fillArray(Fill fill) {
+        return (T[]) new FillArray().createArray(fill.getClazz(), fill);
     }
 
     /**

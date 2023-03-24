@@ -9,9 +9,15 @@ public class FillArray {
 
     @SuppressWarnings("unchecked")
     public <T> Object[] createArray(Class<T> fieldType, Fill fill) {
-        T[] genericArray = (T[]) Array.newInstance(fieldType.getComponentType(), fill.getCollectionSize());
+
+        Class<?> componentType = fieldType.getComponentType();
+        if(componentType == null) {
+            componentType = fieldType;
+        }
+
+        T[] genericArray = (T[]) Array.newInstance(componentType, fill.getCollectionSize());
         for (int i = 0; i < genericArray.length; i++) {
-            genericArray[i] = (T) new ElementCreationService().generateSingleValue(fieldType.getComponentType(), fill);
+            genericArray[i] = (T) new ElementCreationService().generateSingleValue(componentType, fill);
         }
         return genericArray;
     }
