@@ -26,16 +26,4 @@ public class StringFill implements BoxTypeFill {
                 .mapToObj(i -> randomAlphabet(fill));
     }
 
-    @Override
-    public int hashCode() {
-        return getClazz().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof BoxTypeFill boxTypeFill) {
-            return this.getClazz().equals(boxTypeFill.getClazz());
-        }
-        return false;
-    }
 }

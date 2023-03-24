@@ -33,10 +33,20 @@ public class ElementCreationService {
 
     public ElementCreationService() {
         findLocalContainerForBoxType();
-        this.containerBoxType.addAll(new DefaultBoxTypeContainer().getContainer());
+        new DefaultBoxTypeContainer().getContainer()
+                .forEach(boxTypeFill -> {
+                    if (!this.containerBoxType.stream().map(ClazzType::getClazz).toList().contains(boxTypeFill.getClazz())) {
+                        this.containerBoxType.add(boxTypeFill);
+                    }
+                });
 
         findLocalContainerForObjectType();
-        this.containerObjectType.addAll(new DefaultObjectTypeContainer().getContainer());
+        new DefaultObjectTypeContainer().getContainer()
+                .forEach(objectTypeFill -> {
+                    if (!this.containerObjectType.stream().map(ClazzType::getClazz).toList().contains(objectTypeFill.getClazz())) {
+                        this.containerObjectType.add(objectTypeFill);
+                    }
+                });
     }
 
     public Object generateSingleValue(Class<?> fieldType, Fill fill) {
@@ -90,8 +100,8 @@ public class ElementCreationService {
     private Class<?> getCollectionGenericType(Type genericCollectionType, Fill fill) {
         try {
             //Добавил такую кривую проверку так как идет извлечение типов. А все объекты являются по умолчанию наследниками java.lang.Object
-            if(genericCollectionType.getTypeName().equals("java.lang.Object")) {
-               return getGenericClass(fill);
+            if (genericCollectionType.getTypeName().equals("java.lang.Object")) {
+                return getGenericClass(fill);
             }
             return (Class<?>) genericCollectionType;
         } catch (Exception ex) {
@@ -136,10 +146,10 @@ public class ElementCreationService {
     }
 
     /**
-     * @param vClass           класс поле из объекта наполнения.
-     * @param fill специальный объект для передачи объекта наполнения и состояния.
-     *
-     * Тут мы возвращаем null так как если объект создать нельзя или нужная глубина достигнута то в поле мы просто записываем null;
+     * @param vClass класс поле из объекта наполнения.
+     * @param fill   специальный объект для передачи объекта наполнения и состояния.
+     *               <p>
+     *               Тут мы возвращаем null так как если объект создать нельзя или нужная глубина достигнута то в поле мы просто записываем null;
      */
     @SuppressWarnings("unchecked")
     public static <T> T createInstance(Class<T> vClass, Fill fill) {
@@ -149,6 +159,8 @@ public class ElementCreationService {
             if (deep > 0) {
                 Fill fillNextNode = Fill.object(newInstance)
                         .excludeField(fill.getExcludedField())
+                        .collectionSize(fill.getCollectionSize())
+                        .valueLength(fill.getValueLength())
                         .setDeep(--deep)
                         .withGeneric(fill.getGenericType()).gen();
                 fill(fillNextNode);

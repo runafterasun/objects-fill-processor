@@ -5,6 +5,7 @@ import objects.fill.service.containers.DefaultCollectionTypeContainer;
 import objects.fill.service.interfaces.CollectionTypeContainerService;
 import objects.fill.types.array.FillArray;
 import objects.fill.types.collection_type.CollectionTypeFill;
+import objects.fill.types.interfaces.ClazzType;
 import objects.fill.utils.ScanningForClassUtils;
 
 import java.lang.reflect.Field;
@@ -19,27 +20,32 @@ import static objects.fill.service.ElementCreationService.findClassInContainer;
  * Фабрика генерации случайных коллекций. Должна проходить по всему дереву зависимостей.
  */
 public class CollectionElementCreationService {
-    private static final Set<CollectionTypeFill> containerCollectionType = new HashSet<>();
+    private final Set<CollectionTypeFill> containerCollectionType = new HashSet<>();
 
     public CollectionElementCreationService() {
         findLocalContainerForCollectionType();
-        containerCollectionType.addAll(new DefaultCollectionTypeContainer().getContainer());
+        new DefaultCollectionTypeContainer().getContainer()
+                .forEach(collectionTypeFill -> {
+                    if (!this.containerCollectionType.stream().map(ClazzType::getClazz).toList().contains(collectionTypeFill.getClazz())) {
+                        this.containerCollectionType.add(collectionTypeFill);
+                    }
+                });
     }
 
     public Object generateCollection(Field field, Fill fill) {
 
         Type types = field.getGenericType();
         if (types instanceof ParameterizedType pType && (fill.getGenericType() == null)) {
-                fill.setGenericType(pType.getActualTypeArguments());
+            fill.setGenericType(pType.getActualTypeArguments());
         }
 
         Class<?> type = field.getType();
         Optional<CollectionTypeFill> classForCollectionType = findClassInContainer(type, containerCollectionType);
 
-        if(classForCollectionType.isPresent()) {
+        if (classForCollectionType.isPresent()) {
             return classForCollectionType.get().generate(field, fill);
         }
-        if(type.isArray()) {
+        if (type.isArray()) {
             return new FillArray().createArray(type, fill);
         }
         return new ElementCreationService().generateSingleValue(type, fill);

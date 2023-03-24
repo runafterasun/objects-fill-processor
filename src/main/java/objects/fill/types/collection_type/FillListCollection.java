@@ -18,16 +18,4 @@ public class FillListCollection implements CollectionTypeFill {
         return List.class;
     }
 
-    @Override
-    public int hashCode() {
-        return getClazz().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof CollectionTypeFill collectionTypeFill) {
-            return this.getClazz().equals(collectionTypeFill.getClazz());
-        }
-        return false;
-    }
 }

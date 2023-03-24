@@ -31,7 +31,7 @@ public class MapFill implements CollectionTypeFill {
         Class<V> mapValue = (Class<V>) listType.getActualTypeArguments()[1];
 
         Map<K, V> map = new HashMap<>();
-        for (int i = 0; i < fill.getValueLength(); i++) {
+        for (int i = 0; i < fill.getCollectionSize(); i++) {
             K key = (K) new ElementCreationService().generateSingleValue(mapKey, fill);
             V value = (V) new ElementCreationService().generateSingleValue(mapValue, fill);
             map.put(key, value);
@@ -40,16 +40,4 @@ public class MapFill implements CollectionTypeFill {
         return map;
     }
 
-    @Override
-    public int hashCode() {
-        return getClazz().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof CollectionTypeFill collectionTypeFill) {
-            return this.getClazz().equals(collectionTypeFill.getClazz());
-        }
-        return false;
-    }
 }

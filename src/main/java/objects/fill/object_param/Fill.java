@@ -1,7 +1,6 @@
 package objects.fill.object_param;
 
 import objects.fill.annotation_processor.exceptions.FillException;
-import objects.fill.annotation_processor.exceptions.RandomValueException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
@@ -101,7 +100,7 @@ public final class Fill {
         return new FillBuilder(object);
     }
 
-    public static FillBuilder clazz(Class<?> clazz) {
+    public static FillBuilder object(Class<?> clazz) {
         return new FillBuilder(clazz);
     }
 
@@ -116,14 +115,14 @@ public final class Fill {
             try {
                 this.clazz = clazz;
                 this.objectz = clazz.getDeclaredConstructor().newInstance();
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
-                throw new RandomValueException(ex);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ignore) {
+
             }
         }
 
-        private final Object objectz;
+        private Object objectz;
 
-        private final Class<?> clazz;
+        private Class<?> clazz;
 
         private List<String> excludedFieldName = new ArrayList<>();
 

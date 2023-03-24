@@ -33,16 +33,4 @@ public class EnumFill implements ObjectTypeFill {
                 });
     }
 
-    @Override
-    public int hashCode() {
-        return getClazz().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof ObjectTypeFill objectTypeFill) {
-            return this.getClazz().equals(objectTypeFill.getClazz());
-        }
-        return false;
-    }
 }

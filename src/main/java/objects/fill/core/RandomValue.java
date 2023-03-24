@@ -40,4 +40,12 @@ public final class RandomValue {
         }
     }
 
+    /**
+     * @param fill объект содержащий всю информацию по файлу.
+     */
+    @SuppressWarnings({"unchecked", "unused"})
+    public static <K> K fillSingleVal(Fill fill) {
+        return (K) new ElementCreationService().generateSingleValue(fill.getClazz(), fill);
+    }
+
 }
