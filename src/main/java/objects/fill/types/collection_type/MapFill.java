@@ -1,7 +1,7 @@
 package objects.fill.types.collection_type;
 
 import objects.fill.core.GlobalParameters;
-import objects.fill.object_param.FillObjectParams;
+import objects.fill.object_param.Fill;
 import objects.fill.service.ElementCreationService;
 
 import java.lang.reflect.Field;
@@ -15,8 +15,8 @@ import java.util.Map;
 public class MapFill implements CollectionTypeFill {
 
     @Override
-    public Object generate(Field field, FillObjectParams fillObjectParams) {
-        return fillMap(field, fillObjectParams);
+    public Object generate(Field field, Fill fill) {
+        return fillMap(field, fill);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class MapFill implements CollectionTypeFill {
     }
 
     @SuppressWarnings("unchecked")
-    public <K, V> Map<K, V> fillMap(Field field, FillObjectParams fillObjectParams) {
+    public <K, V> Map<K, V> fillMap(Field field, Fill fill) {
 
         ParameterizedType listType = (ParameterizedType) field.getGenericType();
         Class<K> mapKey = (Class<K>) listType.getActualTypeArguments()[0];
@@ -33,8 +33,8 @@ public class MapFill implements CollectionTypeFill {
 
         Map<K, V> map = new HashMap<>();
         for (int i = 0; i < GlobalParameters.objectCount.getValue(); i++) {
-            K key = (K) new ElementCreationService().generateSingleValue(mapKey, fillObjectParams);
-            V value = (V) new ElementCreationService().generateSingleValue(mapValue, fillObjectParams);
+            K key = (K) new ElementCreationService().generateSingleValue(mapKey, fill);
+            V value = (V) new ElementCreationService().generateSingleValue(mapValue, fill);
             map.put(key, value);
         }
 

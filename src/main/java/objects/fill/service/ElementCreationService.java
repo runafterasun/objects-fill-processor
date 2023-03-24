@@ -2,7 +2,7 @@ package objects.fill.service;
 
 import objects.fill.core.GlobalParameters;
 import objects.fill.core.RandomValueFieldSetterCallback;
-import objects.fill.object_param.FillObjectParams;
+import objects.fill.object_param.Fill;
 import objects.fill.service.containers.DefaultBoxTypeContainer;
 import objects.fill.service.containers.DefaultObjectTypeContainer;
 import objects.fill.service.interfaces.BoxTypeContainerService;
@@ -19,7 +19,6 @@ import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static objects.fill.core.ObjectFillWithRandomValue.getFillObjectParams;
 import static objects.fill.utils.FieldUtils.doWithFields;
 
 /**
@@ -41,32 +40,33 @@ public class ElementCreationService {
         this.containerObjectType.addAll(new DefaultObjectTypeContainer().getContainer());
     }
 
-    public Object generateSingleValue(Class<?> fieldType, FillObjectParams fillObjectParams) {
-        Class<?> collectionGenericType = getCollectionGenericType(fieldType, fillObjectParams);
+    public Object generateSingleValue(Class<?> fieldType, Fill fill) {
+        Class<?> collectionGenericType = getCollectionGenericType(fieldType, fill);
 
         Optional<BoxTypeFill> classForGenerationBoxType = findClassInContainer(collectionGenericType, containerBoxType);
         if (classForGenerationBoxType.isPresent()) {
-            return classForGenerationBoxType.get().generate(fillObjectParams);
+            return classForGenerationBoxType.get().generate(fill);
         }
 
         Optional<ObjectTypeFill> classForGenerationObjectType = findClassInContainer(collectionGenericType, containerObjectType);
         if (classForGenerationObjectType.isPresent()) {
-            return classForGenerationObjectType.get().generate(collectionGenericType, fillObjectParams);
+            return classForGenerationObjectType.get().generate(collectionGenericType, fill);
         }
 
-        return createInstance(collectionGenericType, fillObjectParams);
+        return createInstance(collectionGenericType, fill);
     }
 
-    public Stream<?> fillCollectionStream(Field field, FillObjectParams fillObjectParams) {
+    @SuppressWarnings("unchecked")
+    public <T> Stream<T> fillCollectionStream(Field field, Fill fill) {
 
         ParameterizedType listType = (ParameterizedType) field.getGenericType();
         Optional<Type> genericCollectionType = Stream.of(listType.getActualTypeArguments()).findFirst();
 
         if (genericCollectionType.isPresent()) {
             try {
-                Class<?> collectionGenericType = getCollectionGenericType(genericCollectionType.get(), fillObjectParams);
+                Class<?> collectionGenericType = getCollectionGenericType(genericCollectionType.get(), fill);
 
-                return generateCollectionByClassType(fillObjectParams, collectionGenericType);
+                return (Stream<T>) generateCollectionByClassType(fill, collectionGenericType);
             } catch (Exception ex) {
                 return Stream.empty();
             }
@@ -74,7 +74,7 @@ public class ElementCreationService {
         return Stream.empty();
     }
 
-    private Stream<?> generateCollectionByClassType(FillObjectParams fillObjectParams, Class<?> collectionGenericType) {
+    private Stream<?> generateCollectionByClassType(Fill fill, Class<?> collectionGenericType) {
         Optional<BoxTypeFill> classForGenerationBoxType = findClassInContainer(collectionGenericType, containerBoxType);
         if (classForGenerationBoxType.isPresent()) {
             return classForGenerationBoxType.get().fillStream();
@@ -85,24 +85,24 @@ public class ElementCreationService {
             return classForGenerationObjectType.get().fillStream(collectionGenericType);
         }
 
-        return fillInnerStream(collectionGenericType, fillObjectParams);
+        return fillInnerStream(collectionGenericType, fill);
     }
 
-    private Class<?> getCollectionGenericType(Type genericCollectionType, FillObjectParams fillObjectParams) {
+    private Class<?> getCollectionGenericType(Type genericCollectionType, Fill fill) {
         try {
             //Добавил такую кривую проверку так как идет извлечение типов. А все объекты являются по умолчанию наследниками java.lang.Object
             if(genericCollectionType.getTypeName().equals("java.lang.Object")) {
-               return getGenericClass(fillObjectParams);
+               return getGenericClass(fill);
             }
             return (Class<?>) genericCollectionType;
         } catch (Exception ex) {
-            return getGenericClass(fillObjectParams);
+            return getGenericClass(fill);
         }
     }
 
-    private static Class<?> getGenericClass(FillObjectParams fillObjectParams) {
+    private static Class<?> getGenericClass(Fill fill) {
         return (Class<?>) Arrays
-                .stream(fillObjectParams.getGenericType())
+                .stream(fill.getGenericType())
                 .findFirst()
                 .orElse(null);
     }
@@ -114,10 +114,10 @@ public class ElementCreationService {
                 .findFirst();
     }
 
-    private <V> Stream<V> fillInnerStream(Class<V> vClass, FillObjectParams fillObjectParams) {
+    private <V> Stream<V> fillInnerStream(Class<V> vClass, Fill fill) {
         return IntStream
                 .range(0, GlobalParameters.objectCount.getValue())
-                .mapToObj(i -> createInstance(vClass, fillObjectParams));
+                .mapToObj(i -> createInstance(vClass, fill));
     }
 
     private void findLocalContainerForBoxType() {
@@ -138,21 +138,22 @@ public class ElementCreationService {
 
     /**
      * @param vClass           класс поле из объекта наполнения.
-     * @param fillObjectParams специальный объект для передачи объекта наполнения и состояния.
+     * @param fill специальный объект для передачи объекта наполнения и состояния.
      *
      * Тут мы возвращаем null так как если объект создать нельзя или нужная глубина достигнута то в поле мы просто записываем null;
      */
     @SuppressWarnings("unchecked")
-    public static <T> T createInstance(Class<T> vClass, FillObjectParams fillObjectParams) {
+    public static <T> T createInstance(Class<T> vClass, Fill fill) {
         try {
-            T v = vClass.getDeclaredConstructor().newInstance();
-            FillObjectParams fillObjectParamsNextNode = getFillObjectParams(v, fillObjectParams.getExcludedFieldName());
-            Integer deep = fillObjectParams.getDeep();
+            T newInstance = vClass.getDeclaredConstructor().newInstance();
+            Integer deep = fill.getDeep();
             if (deep > 0) {
-                fillObjectParamsNextNode.setDeep(--deep);
-                fillObjectParamsNextNode.setGenericType(fillObjectParams.getGenericType());
-                fill(fillObjectParamsNextNode);
-                return (T) fillObjectParamsNextNode.getObject();
+                Fill fillNextNode = Fill.object(newInstance)
+                        .excludeField(fill.getExcludedField())
+                        .setDeep(--deep)
+                        .withGeneric(fill.getGenericType()).gen();
+                fill(fillNextNode);
+                return (T) fillNextNode.getObjectz();
             }
             return null;
         } catch (Exception ignored) {
@@ -161,9 +162,9 @@ public class ElementCreationService {
     }
 
     /**
-     * @param fillObjectParams Специальный объект для передачи объекта наполнения и состояния.
+     * @param fill Специальный объект для передачи объекта наполнения и состояния.
      */
-    private static void fill(FillObjectParams fillObjectParams) {
-        doWithFields(fillObjectParams.getObject().getClass(), new RandomValueFieldSetterCallback(fillObjectParams));
+    private static void fill(Fill fill) {
+        doWithFields(fill.getObjectz().getClass(), new RandomValueFieldSetterCallback(fill));
     }
 }

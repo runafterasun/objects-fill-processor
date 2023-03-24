@@ -1,7 +1,7 @@
 package objects.fill.types.box_type;
 
 import objects.fill.core.GlobalParameters;
-import objects.fill.object_param.FillObjectParams;
+import objects.fill.object_param.Fill;
 
 import java.util.Date;
 import java.util.stream.IntStream;
@@ -12,7 +12,7 @@ import static objects.fill.utils.RandomGenerator.generateRandomDate;
 public class DateFill implements BoxTypeFill {
 
     @Override
-    public Object generate(FillObjectParams fillObjectParams) {
+    public Object generate(Fill fill) {
         return generateRandomDate();
     }
 

@@ -1,7 +1,7 @@
 package objects.fill.types.box_type;
 
 import objects.fill.core.GlobalParameters;
-import objects.fill.object_param.FillObjectParams;
+import objects.fill.object_param.Fill;
 
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -11,7 +11,7 @@ import static objects.fill.utils.RandomGenerator.*;
 public class IntegerFill implements BoxTypeFill {
 
     @Override
-    public Object generate(FillObjectParams fillObjectParams) {
+    public Object generate(Fill fill) {
         return Integer.parseInt(randomNum());
     }
 

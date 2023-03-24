@@ -1,6 +1,6 @@
 package objects.fill.service;
 
-import objects.fill.object_param.FillObjectParams;
+import objects.fill.object_param.Fill;
 import objects.fill.service.containers.DefaultCollectionTypeContainer;
 import objects.fill.service.interfaces.CollectionTypeContainerService;
 import objects.fill.types.array.FillArray;
@@ -26,23 +26,23 @@ public class CollectionElementCreationService {
         containerCollectionType.addAll(new DefaultCollectionTypeContainer().getContainer());
     }
 
-    public Object generateCollection(Field field, FillObjectParams fillObjectParams) {
+    public Object generateCollection(Field field, Fill fill) {
 
         Type types = field.getGenericType();
-        if (types instanceof ParameterizedType pType && (fillObjectParams.getGenericType() == null)) {
-                fillObjectParams.setGenericType(pType.getActualTypeArguments());
+        if (types instanceof ParameterizedType pType && (fill.getGenericType() == null)) {
+                fill.setGenericType(pType.getActualTypeArguments());
         }
 
         Class<?> type = field.getType();
         Optional<CollectionTypeFill> classForCollectionType = findClassInContainer(type, containerCollectionType);
 
         if(classForCollectionType.isPresent()) {
-            return classForCollectionType.get().generate(field, fillObjectParams);
+            return classForCollectionType.get().generate(field, fill);
         }
         if(type.isArray()) {
-            return new FillArray().createArray(type, fillObjectParams);
+            return new FillArray().createArray(type, fill);
         }
-        return new ElementCreationService().generateSingleValue(type, fillObjectParams);
+        return new ElementCreationService().generateSingleValue(type, fill);
     }
 
 

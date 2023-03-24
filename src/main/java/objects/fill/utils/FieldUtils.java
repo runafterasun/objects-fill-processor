@@ -39,7 +39,7 @@ public class FieldUtils {
                 result = clazz.getDeclaredFields();
                 declaredFieldsCache.put(clazz, (result.length == 0 ? EMPTY_FIELD_ARRAY : result));
             }
-            catch (Throwable ex) {
+            catch (Exception ex) {
                 throw new IllegalStateException("Failed to introspect Class [" + clazz.getName() +
                         "] from ClassLoader [" + clazz.getClassLoader() + "]", ex);
             }

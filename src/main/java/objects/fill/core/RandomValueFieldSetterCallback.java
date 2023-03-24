@@ -1,6 +1,6 @@
 package objects.fill.core;
 
-import objects.fill.object_param.FillObjectParams;
+import objects.fill.object_param.Fill;
 import objects.fill.service.CollectionElementCreationService;
 import objects.fill.utils.FieldCallback;
 
@@ -11,29 +11,29 @@ import java.util.function.Function;
 /**
  * Необходимый класс для рефлексии что бы можно было обходить поля
  */
-public record RandomValueFieldSetterCallback(FillObjectParams fillObjectParams) implements FieldCallback {
+public record RandomValueFieldSetterCallback(Fill fill) implements FieldCallback {
 
     /**
      * Проверка исключенных полей
      */
-    private static final Function<Field, Function<FillObjectParams, Boolean>> checkExcludedName =
+    private static final Function<Field, Function<Fill, Boolean>> checkExcludedName =
             checkField ->
                     fillObjectParam ->
-                            fillObjectParam.getExcludedFieldName().contains(checkField.getName());
+                            !fillObjectParam.getExcludedField().contains(checkField.getName());
 
     /**
      * Переопределение метода обхода полей
      */
     @Override
     public void doWith(Field field) throws IllegalAccessException {
-        if (!Modifier.isFinal(field.getModifiers())) {
-            if (!checkExcludedName.apply(field).apply(fillObjectParams)) {
-                Object value = new CollectionElementCreationService().generateCollection(field, fillObjectParams);
+        Boolean checkExName = checkExcludedName.apply(field).apply(fill);
+        if (!Modifier.isFinal(field.getModifiers()) && Boolean.TRUE.equals(checkExName)) {
+                Object value = new CollectionElementCreationService().generateCollection(field, fill);
                 if (value != null) {
                     field.setAccessible(true);
-                    field.set(fillObjectParams.getObject(), value);
+                    field.set(fill.getObjectz(), value);
                 }
-            }
+
         }
     }
 }
