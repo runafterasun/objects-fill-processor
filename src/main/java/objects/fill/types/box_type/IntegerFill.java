@@ -1,6 +1,5 @@
 package objects.fill.types.box_type;
 
-import objects.fill.core.GlobalParameters;
 import objects.fill.object_param.Fill;
 
 import java.util.stream.IntStream;
@@ -12,7 +11,7 @@ public class IntegerFill implements BoxTypeFill {
 
     @Override
     public Object generate(Fill fill) {
-        return Integer.parseInt(randomNum());
+        return Integer.parseInt(randomNum(fill));
     }
 
     @Override
@@ -21,10 +20,10 @@ public class IntegerFill implements BoxTypeFill {
     }
 
     @Override
-    public Stream<Object> fillStream() {
+    public Stream<Object> fillStream(Fill fill) {
         return IntStream
-                .range(0, GlobalParameters.objectCount.getValue())
-                .mapToObj(i -> Integer.parseInt(randomNum()));
+                .range(0, fill.getCollectionSize())
+                .mapToObj(i -> Integer.parseInt(randomNum(fill)));
     }
 
     @Override

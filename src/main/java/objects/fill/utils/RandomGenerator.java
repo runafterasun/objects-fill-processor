@@ -1,6 +1,6 @@
 package objects.fill.utils;
 
-import objects.fill.core.GlobalParameters;
+import objects.fill.object_param.Fill;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -15,12 +15,12 @@ public class RandomGenerator {
         throw new IllegalStateException("Utility class");
     }
 
-    public static String randomNum() {
-        return randomNumeric(GlobalParameters.valueLength.getValue());
+    public static String randomNum(Fill fill) {
+        return randomNumeric(fill.getValueLength());
     }
 
-    public static String randomAlphabet() {
-        return randomAlphabetic(GlobalParameters.valueLength.getValue());
+    public static String randomAlphabet(Fill fill) {
+        return randomAlphabetic(fill.getValueLength());
     }
 
     public static Date generateRandomDate() {

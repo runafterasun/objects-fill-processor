@@ -1,6 +1,5 @@
 package objects.fill.types.box_type;
 
-import objects.fill.core.GlobalParameters;
 import objects.fill.object_param.Fill;
 
 import java.util.Date;
@@ -22,9 +21,9 @@ public class DateFill implements BoxTypeFill {
     }
 
     @Override
-    public Stream<Object> fillStream() {
+    public Stream<Object> fillStream(Fill fill) {
         return IntStream
-                .range(0, GlobalParameters.objectCount.getValue())
+                .range(0, fill.getCollectionSize())
                 .mapToObj(i -> generateRandomDate());
     }
 

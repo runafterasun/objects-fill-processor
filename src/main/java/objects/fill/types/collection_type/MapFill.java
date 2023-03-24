@@ -1,6 +1,5 @@
 package objects.fill.types.collection_type;
 
-import objects.fill.core.GlobalParameters;
 import objects.fill.object_param.Fill;
 import objects.fill.service.ElementCreationService;
 
@@ -32,7 +31,7 @@ public class MapFill implements CollectionTypeFill {
         Class<V> mapValue = (Class<V>) listType.getActualTypeArguments()[1];
 
         Map<K, V> map = new HashMap<>();
-        for (int i = 0; i < GlobalParameters.objectCount.getValue(); i++) {
+        for (int i = 0; i < fill.getValueLength(); i++) {
             K key = (K) new ElementCreationService().generateSingleValue(mapKey, fill);
             V value = (V) new ElementCreationService().generateSingleValue(mapValue, fill);
             map.put(key, value);

@@ -31,7 +31,7 @@ public final class RandomValue {
      */
     @SuppressWarnings({"unchecked", "unused"})
     public static <T extends Collection<K>, K> void fillCollection(T collection, Fill fill) {
-        for (int i = 0; i < GlobalParameters.objectCount.getValue(); i++) {
+        for (int i = 0; i < fill.getCollectionSize(); i++) {
             K o = (K) new ElementCreationService().generateSingleValue(fill.getClazz(), fill);
             doWithFields(fill.getClazz(), new RandomValueFieldSetterCallback(fill));
             if (o.getClass().isAssignableFrom(fill.getClazz())) {

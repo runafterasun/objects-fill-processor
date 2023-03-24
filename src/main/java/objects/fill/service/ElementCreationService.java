@@ -1,6 +1,5 @@
 package objects.fill.service;
 
-import objects.fill.core.GlobalParameters;
 import objects.fill.core.RandomValueFieldSetterCallback;
 import objects.fill.object_param.Fill;
 import objects.fill.service.containers.DefaultBoxTypeContainer;
@@ -77,12 +76,12 @@ public class ElementCreationService {
     private Stream<?> generateCollectionByClassType(Fill fill, Class<?> collectionGenericType) {
         Optional<BoxTypeFill> classForGenerationBoxType = findClassInContainer(collectionGenericType, containerBoxType);
         if (classForGenerationBoxType.isPresent()) {
-            return classForGenerationBoxType.get().fillStream();
+            return classForGenerationBoxType.get().fillStream(fill);
         }
 
         Optional<ObjectTypeFill> classForGenerationObjectType = findClassInContainer(collectionGenericType, containerObjectType);
         if (classForGenerationObjectType.isPresent()) {
-            return classForGenerationObjectType.get().fillStream(collectionGenericType);
+            return classForGenerationObjectType.get().fillStream(collectionGenericType, fill);
         }
 
         return fillInnerStream(collectionGenericType, fill);
@@ -116,7 +115,7 @@ public class ElementCreationService {
 
     private <V> Stream<V> fillInnerStream(Class<V> vClass, Fill fill) {
         return IntStream
-                .range(0, GlobalParameters.objectCount.getValue())
+                .range(0, fill.getCollectionSize())
                 .mapToObj(i -> createInstance(vClass, fill));
     }
 

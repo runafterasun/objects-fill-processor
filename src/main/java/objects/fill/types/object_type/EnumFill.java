@@ -1,6 +1,5 @@
 package objects.fill.types.object_type;
 
-import objects.fill.core.GlobalParameters;
 import objects.fill.object_param.Fill;
 
 import java.util.Random;
@@ -24,9 +23,9 @@ public class EnumFill implements ObjectTypeFill {
 
 
     @Override
-    public Stream<Object> fillStream(Class<?> collectionGenericType) {
+    public Stream<Object> fillStream(Class<?> collectionGenericType, Fill fill) {
         return IntStream
-                .range(0, GlobalParameters.objectCount.getValue())
+                .range(0, fill.getCollectionSize())
                 .mapToObj(i -> {
                     Object[] enumValues = collectionGenericType.getEnumConstants();
                     int randomEnumNumber = new Random().nextInt(enumValues.length);

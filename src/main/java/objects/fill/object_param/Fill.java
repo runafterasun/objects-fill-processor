@@ -1,7 +1,7 @@
 package objects.fill.object_param;
 
+import objects.fill.annotation_processor.exceptions.FillException;
 import objects.fill.annotation_processor.exceptions.RandomValueException;
-import objects.fill.core.GlobalParameters;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
@@ -11,6 +11,16 @@ import java.util.List;
 public final class Fill {
 
     private Fill() {}
+
+    private Fill(Object objectz, Class<?> clazz, List<String> excludedFieldName, Integer deep, Type[] genericType, Integer collectionSize, Integer valueLength) {
+        this.objectz = objectz;
+        this.clazz = clazz;
+        this.excludedFieldName = excludedFieldName;
+        this.deep = deep;
+        this.genericType = genericType;
+        this.collectionSize = collectionSize;
+        this.valueLength = valueLength;
+    }
 
     /**
      * object объект для наполнения.
@@ -32,18 +42,23 @@ public final class Fill {
      */
     private Integer deep;
 
+
+    /**
+     * Количество объектов созданных в коллекции.
+     */
+    private Integer collectionSize;
+
+    /**
+     * Количество символов для случайной генерации.
+     */
+    private Integer valueLength;
+
+
     /**
      * genericType тип обобщения
      */
     private Type[] genericType;
 
-    private Fill(Object objectz, Class<?> clazz, List<String> excludedFieldName, Integer deep, Type[] genericType) {
-        this.objectz = objectz;
-        this.clazz = clazz;
-        this.excludedFieldName = excludedFieldName;
-        this.deep = deep;
-        this.genericType = genericType;
-    }
 
     public Type[] getGenericType() {
         return genericType;
@@ -72,6 +87,14 @@ public final class Fill {
 
     public Integer getDeep() {
         return deep;
+    }
+
+    public Integer getCollectionSize() {
+        return collectionSize;
+    }
+
+    public Integer getValueLength() {
+        return valueLength;
     }
 
     public static FillBuilder object(Object object) {
@@ -104,9 +127,25 @@ public final class Fill {
 
         private List<String> excludedFieldName = new ArrayList<>();
 
-        private Integer deep = GlobalParameters.fillDeep.getValue();
+        private Integer deep = 3;
+
+        private Integer collectionSize = 5;
+
+        private Integer valueLength = 5;
 
         private Type[] genericType;
+
+        public FillBuilder collectionSize(Integer collectionSize) {
+            checkPositive(collectionSize);
+            this.collectionSize = collectionSize;
+            return this;
+        }
+
+        public FillBuilder valueLength(Integer valueLength) {
+            checkPositive(valueLength);
+            this.valueLength = valueLength;
+            return this;
+        }
 
         public FillBuilder withGeneric(Type[] genericType) {
             this.genericType = genericType;
@@ -126,12 +165,19 @@ public final class Fill {
         }
 
         public FillBuilder setDeep(Integer deep) {
+            checkPositive(deep);
             this.deep = deep;
             return this;
         }
 
         public Fill gen() {
-            return new Fill(objectz, clazz, excludedFieldName, deep, genericType);
+            return new Fill(objectz, clazz, excludedFieldName, deep, genericType, collectionSize, valueLength);
+        }
+
+        private void checkPositive(Integer num) {
+            if (num < 1) {
+                throw new FillException("Значение не может быть ниже единицы");
+            }
         }
 
     }

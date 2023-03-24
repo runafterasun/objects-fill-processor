@@ -1,6 +1,5 @@
 package objects.fill.types.primitive_type;
 
-import objects.fill.core.GlobalParameters;
 import objects.fill.object_param.Fill;
 import objects.fill.types.box_type.BoxTypeFill;
 
@@ -13,7 +12,7 @@ public class PrimitiveDouble implements BoxTypeFill {
 
     @Override
     public Object generate(Fill fill) {
-        return Double.parseDouble(randomNum());
+        return Double.parseDouble(randomNum(fill));
     }
 
     @Override
@@ -22,10 +21,10 @@ public class PrimitiveDouble implements BoxTypeFill {
     }
 
     @Override
-    public Stream<Object> fillStream() {
+    public Stream<Object> fillStream(Fill fill) {
         return IntStream
-                .range(0, GlobalParameters.objectCount.getValue())
-                .mapToObj(i -> Double.parseDouble(randomNum()));
+                .range(0, fill.getCollectionSize())
+                .mapToObj(i -> Double.parseDouble(randomNum(fill)));
     }
 
     @Override
