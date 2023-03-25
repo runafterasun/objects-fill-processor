@@ -73,28 +73,21 @@ public void TestNext() {
 ```
 ## Usage
 
-* If you need to fill some object or class you can use Fill builder
+* Fill some object or class you can use Fill builder
 ```java
-For class
+//For class
 TestBoxClass testBoxClass = RandomValue.fill(Fill.object(TestBoxClass.class).gen());
 
 //For object
 TestBoxClass testBoxClass = RandomValue.fill(Fill.object(new TestBoxClass()).gen());
-
-//or 
-        
-TestBoxClass testBoxClass = new TestBoxClass();
-RandomValue.fill(Fill.object(testBoxClass).gen());
 ```
 
-* You can set deep for filling object. Default value equals three.
+* Set deep for filling object. Default value equals three.
 ```java
 First first =  RandomValue.fill(Fill.object(First.class).setDeep(2).gen());
-
-assert first.getSecond().getThird() == null;
 ```
 
-* Or if you need you can set size of value, array or collection size. Default value equals five.
+* Or set size of value, array or collection size. Default value equals five.
 ```java
 CollectionTypeTest collectionType = 
         RandomValue.fill(Fill.object(CollectionTypeTest.class)
@@ -115,7 +108,7 @@ assert simpleBoxTypeTestObj.getaDouble() != null;
 assert simpleBoxTypeTestObj.getaLong() == null;
 ```
 
-* You can fill class or object with one generic class
+* Fill class or object with one generic class
 ```java
 GenericType<String> collectionType = new GenericType<>();
 
@@ -141,7 +134,7 @@ public class GenericTypeTest {
 }
 ```
 
-* You can create collections like List, Set and some Arrays
+* Create collections like List, Set and some Arrays
 ```java
 //Set
 Set<SimpleCollection> simpleCollection = new HashSet<>();
@@ -152,10 +145,58 @@ RandomValue.fillCollection(simpleCollection, Fill.object(SimpleCollection.class)
 //Array
 SimpleArray[] simpleArray = RandomValue.fillArray(Fill.object(SimpleArray.class).gen());
 
-Or with generic class
-
+//Or with generic class
 GenericType<String> collectionType = new GenericType<>();
 Set<GenericType<String>> genericTypeHashSet = new HashSet<>();
 RandomValue.fillCollection(genericTypeHashSet, Fill.object(GenericType.class)
                                                     .withGeneric(String.class).gen());
+```
+
+## Annotation processor
+
+* Create and register own type generator
+```java
+@BoxType
+public class ParentProcessorCreateRandom implements BoxTypeFill {
+
+    @Override
+    public Object generate(Fill fillObjectParams) {
+        Parent parent = new Parent();
+        parent.setTen(10);
+        return parent;
+    }
+
+    @Override
+    public Stream<Object> fillStream(Fill fill) {
+        return IntStream
+                .range(0, fill.getCollectionSize())
+                .mapToObj(i -> generate(fill));
+    }
+
+    @Override
+    public Class<?> getClazz() {
+        return Parent.class;
+    }
+}
+```
+
+* Create and register own type collection
+```java
+@CollectionType
+public class FillSetCollection implements CollectionTypeFill {
+
+    @Override
+    public Object generate(Field field, Fill fill) {
+        return fillCollectionStream(field, fill)
+                .filter(ss -> ss instanceof String)
+                .map(dd -> ((String) dd).toUpperCase())
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Class<?> getClazz() {
+        return Set.class;
+    }
+
+}
 ```

@@ -74,8 +74,8 @@ public class ElementCreationService {
         if (genericCollectionType.isPresent()) {
             try {
                 Class<?> collectionGenericType = getCollectionGenericType(genericCollectionType.get(), fill);
-
                 return (Stream<T>) generateCollectionByClassType(fill, collectionGenericType);
+
             } catch (Exception ex) {
                 return Stream.empty();
             }

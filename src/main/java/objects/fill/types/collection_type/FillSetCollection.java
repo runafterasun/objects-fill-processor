@@ -1,7 +1,6 @@
 package objects.fill.types.collection_type;
 
 import objects.fill.object_param.Fill;
-import objects.fill.service.ElementCreationService;
 
 import java.lang.reflect.Field;
 import java.util.Set;
@@ -11,7 +10,7 @@ public class FillSetCollection implements CollectionTypeFill {
 
     @Override
     public Object generate(Field field, Fill fill) {
-        return new ElementCreationService().fillCollectionStream(field, fill).collect(Collectors.toSet());
+        return fillCollectionStream(field, fill).collect(Collectors.toSet());
     }
 
     @Override
