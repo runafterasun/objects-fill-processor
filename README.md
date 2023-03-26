@@ -2,13 +2,17 @@
 ![Build Status](https://github.com/runafterasun/objects-fill-processor/actions/workflows/gradle.yml/badge.svg)
 
 [The problem](#the-problem)
-- [Create POJO](you've-an-pojo)
+- [Create POJO][1]
+- [Deep recursion][2]
+- [Fill collection][3]
 
 [Usage](#Usage)
 
 ## The problem
 
-* You've an POJO or Entity file that need to fill with random data.
+
+[1]: #first
+You've an POJO or Entity file that need to fill with random data.
 ```java
 @Test
 public void Test() {
@@ -19,7 +23,7 @@ public void Test() {
     test.set...(...);
 }
 ```
-
+[2]: #second
 * You've got deep recursion object that need to fill with random data.
 ```java
 @Test
@@ -37,6 +41,7 @@ public void Test() {
     test.setSubTest(subTest);
 }
 ```
+[3]: #third
 * You've got some collections that you need to fill.
 ```java
 @Test
