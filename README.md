@@ -1,18 +1,32 @@
 # Object Fill With Random Value
 ![Build Status](https://github.com/runafterasun/objects-fill-processor/actions/workflows/gradle.yml/badge.svg)
 
-[The problem](#the-problem)
-- [Create POJO](#first)
-- [Deep recursion](#second)
-- [Fill collection](#third)
+This project can help with generation some random information to object.
+
+[The problems](#the-problem)
+- [Create POJO](#create-pojo)
+- [Deep recursion](#deep-recursion)
+- [Fill collection](#fill-collection)
+- [Create own type](#create-own-type)
 
 [Usage](#Usage)
+- [Fill builder](#fill-builder)
+- [Fill generic](#generic-fill)
+- [Fill collection](#collection-fill)
 
-## The problem
+[Annotation processor for own types](#annotation-processor)
+- [Create box type](#create-box-type)
+- [Create collection](#create-collection)
+
+[What next?](#what-next)
+
+[Support](#support)
+
+## The problems
 
 
-[1]: #first
-You've an POJO or Entity file that need to fill with random data.
+##### Create POJO 
+* Create POJO or Entity file that need to fill with random data.
 ```java
 @Test
 public void Test() {
@@ -23,8 +37,8 @@ public void Test() {
     test.set...(...);
 }
 ```
-[2]: #second
-* You've got deep recursion object that need to fill with random data.
+##### Deep recursion
+* Create deep recursion object that need to fill with random data.
 ```java
 @Test
 public void Test() {
@@ -41,8 +55,8 @@ public void Test() {
     test.setSubTest(subTest);
 }
 ```
-[3]: #third
-* You've got some collections that you need to fill.
+##### Fill collection
+* Create some collections that you need to fill.
 ```java
 @Test
 public void Test() {
@@ -61,7 +75,8 @@ public void Test() {
     subTest.setSubSubTestLst(lst);
 }
 ```
-* You've got some different types or collections that you need to fill.
+##### Create own type
+* Create some different own types or collections that you need to fill.
 ```java
 @Test
 public void Test() {
@@ -83,7 +98,8 @@ public void TestNext() {
 ```
 ## Usage
 
-* Fill some object or class you can use Fill builder
+##### Fill builder
+* For filling some object or class you can use Fill builder
 ```java
 //For class
 TestBoxClass testBoxClass = RandomValue.fill(Fill.object(TestBoxClass.class).gen());
@@ -91,12 +107,10 @@ TestBoxClass testBoxClass = RandomValue.fill(Fill.object(TestBoxClass.class).gen
 //For object
 TestBoxClass testBoxClass = RandomValue.fill(Fill.object(new TestBoxClass()).gen());
 ```
-
 * Set deep for filling object. Default value equals three.
 ```java
 First first =  RandomValue.fill(Fill.object(First.class).setDeep(2).gen());
 ```
-
 * Or set size of value, array or collection size. Default value equals five.
 ```java
 CollectionTypeTest collectionType = 
@@ -118,6 +132,7 @@ assert simpleBoxTypeTestObj.getaDouble() != null;
 assert simpleBoxTypeTestObj.getaLong() == null;
 ```
 
+##### Generic fill
 * Fill class or object with one generic class
 ```java
 GenericType<String> collectionType = new GenericType<>();
@@ -143,7 +158,7 @@ public class GenericTypeTest {
     }
 }
 ```
-
+##### Collection fill
 * Create collections like List, Set and some Arrays
 ```java
 //Set
@@ -164,6 +179,7 @@ RandomValue.fillCollection(genericTypeHashSet, Fill.object(GenericType.class)
 
 ## Annotation processor
 
+##### Create box type
 * Create and register own type generator
 ```java
 @BoxType
@@ -189,7 +205,7 @@ public class ParentProcessorCreateRandom implements BoxTypeFill {
     }
 }
 ```
-
+##### Create collection
 * Create and register own type collection
 ```java
 @CollectionType
@@ -210,3 +226,16 @@ public class FillSetCollection implements CollectionTypeFill {
 
 }
 ```
+
+## What next?? 
+* Collection annotation processor is difficult for overriding.
+* I think about split map and simple collections.
+* Add converter processor and create some default converters (To json or another).
+* Your issues.
+
+## Support
+GitHub Issues …​Create New Issue …​Pull Requests …​Create a Fork
+
+The project is open-source; non-commercial; the license is Apache v2.0. A single person actively develops it at the moment. If you see that the latest release or commit was not many years ago, then it is worth a try to ask, open a ticket. I will react and help you as much as I can afford.
+
+You are welcome to open tickets in GitHub if you have any question, but also for suggestions and only if you like the tool. Usually I struggle with lacking the information about how many are using my tools. Do not leave me in the dark.
