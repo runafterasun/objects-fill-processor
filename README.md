@@ -3,6 +3,8 @@
 
 This project can help with generation some random information to object.
 
+[How to use](#how-to-use) 
+
 [The problems](#the-problem)
 - [Create POJO](#create-pojo)
 - [Deep recursion](#deep-recursion)
@@ -22,8 +24,18 @@ This project can help with generation some random information to object.
 
 [Support](#support)
 
-## The problems
+## How to use
+(Maven central will be later)
+1. Download to IDE
+2. Use gradle command gradle publishMavenJavaPublicationToMavenLocal
+3. Add to dependency. Will work without annotation processor, but you can't create own types.
+```gradle
+testImplementation 'objects.fill:objects-fill-processor:0.0.1'
+testAnnotationProcessor 'objects.fill:objects-fill-processor:0.0.1'
+```
+4. Read doc
 
+## The problems
 
 ##### Create POJO 
 * Create POJO or Entity file that need to fill with random data.
