@@ -1,6 +1,9 @@
 # Object Fill With Random Value
 ![Build Status](https://github.com/runafterasun/objects-fill-processor/actions/workflows/gradle.yml/badge.svg)
 
+[The problem](#the-problem)
+- [Create POJO](you've-an-pojo)
+
 [Usage](#Usage)
 
 ## The problem
