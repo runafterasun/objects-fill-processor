@@ -2,9 +2,9 @@
 ![Build Status](https://github.com/runafterasun/objects-fill-processor/actions/workflows/gradle.yml/badge.svg)
 
 [The problem](#the-problem)
-- [Create POJO][1]
-- [Deep recursion][2]
-- [Fill collection][3]
+- [Create POJO](#first)
+- [Deep recursion](#second)
+- [Fill collection](#third)
 
 [Usage](#Usage)
 
