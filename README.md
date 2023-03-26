@@ -1,6 +1,8 @@
 # Object Fill With Random Value
 ![Build Status](https://github.com/runafterasun/objects-fill-processor/actions/workflows/gradle.yml/badge.svg)
 
+[Usage](#Usage)
+
 ## The problem
 
 * You've an POJO or Entity file that need to fill with random data.
