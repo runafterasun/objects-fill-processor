@@ -15,11 +15,6 @@ public class UUIDFill implements BoxTypeFill {
     }
 
     @Override
-    public Class<?> getClazz() {
-        return UUID.class;
-    }
-
-    @Override
     public Stream<Object> fillStream(Fill fill) {
         return IntStream
                 .range(0, fill.getCollectionSize())

@@ -5,18 +5,13 @@ import objects.fill.object_param.Fill;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static objects.fill.utils.RandomGenerator.*;
+import static objects.fill.utils.RandomGenerator.randomAlphabet;
 
 public class StringFill implements BoxTypeFill {
 
     @Override
     public Object generate(Fill fill) {
         return randomAlphabet(fill);
-    }
-
-    @Override
-    public Class<?> getClazz() {
-        return String.class;
     }
 
     @Override

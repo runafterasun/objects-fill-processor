@@ -5,18 +5,13 @@ import objects.fill.object_param.Fill;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static objects.fill.utils.RandomGenerator.*;
+import static objects.fill.utils.RandomGenerator.randomNum;
 
 public class IntegerFill implements BoxTypeFill {
 
     @Override
     public Object generate(Fill fill) {
         return Integer.parseInt(randomNum(fill));
-    }
-
-    @Override
-    public Class<?> getClazz() {
-        return Integer.class;
     }
 
     @Override

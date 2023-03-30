@@ -13,11 +13,6 @@ public class BooleanFill implements BoxTypeFill {
     }
 
     @Override
-    public Class<?> getClazz() {
-        return Boolean.class;
-    }
-
-    @Override
     public Stream<Object> fillStream(Fill fill) {
         return IntStream
                 .range(0, fill.getCollectionSize())

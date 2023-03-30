@@ -18,11 +18,6 @@ public class MapFill implements CollectionTypeFill {
         return fillMap(field, fill);
     }
 
-    @Override
-    public Class<?> getClazz() {
-        return Map.class;
-    }
-
     @SuppressWarnings("unchecked")
     public <K, V> Map<K, V> fillMap(Field field, Fill fill) {
 

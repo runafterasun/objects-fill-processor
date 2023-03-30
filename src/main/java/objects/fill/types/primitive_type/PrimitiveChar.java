@@ -21,9 +21,4 @@ public class PrimitiveChar implements BoxTypeFill {
                 .mapToObj(i -> randomAlphabet(fill).charAt(0));
     }
 
-    @Override
-    public Class<?> getClazz() {
-        return char.class;
-    }
-
 }

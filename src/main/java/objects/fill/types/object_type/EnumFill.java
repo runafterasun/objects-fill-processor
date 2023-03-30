@@ -17,12 +17,6 @@ public class EnumFill implements ObjectTypeFill {
     }
 
     @Override
-    public Class<?> getClazz() {
-        return Enum.class;
-    }
-
-
-    @Override
     public Stream<Object> fillStream(Class<?> collectionGenericType, Fill fill) {
         return IntStream
                 .range(0, fill.getCollectionSize())

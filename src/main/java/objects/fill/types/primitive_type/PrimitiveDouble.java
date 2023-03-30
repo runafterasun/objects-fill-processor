@@ -16,11 +16,6 @@ public class PrimitiveDouble implements BoxTypeFill {
     }
 
     @Override
-    public Class<?> getClazz() {
-        return double.class;
-    }
-
-    @Override
     public Stream<Object> fillStream(Fill fill) {
         return IntStream
                 .range(0, fill.getCollectionSize())

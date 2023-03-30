@@ -21,9 +21,4 @@ public class PrimitiveInt implements BoxTypeFill {
                 .mapToObj(i -> Integer.parseInt(randomNum(fill)));
     }
 
-    @Override
-    public Class<?> getClazz() {
-        return int.class;
-    }
-
 }

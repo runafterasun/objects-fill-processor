@@ -20,10 +20,5 @@ public class CharacterFill implements BoxTypeFill {
                 .mapToObj(i -> randomAlphabet(fill).charAt(0));
     }
 
-    @Override
-    public Class<?> getClazz() {
-        return Character.class;
-    }
-
 
 }

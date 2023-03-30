@@ -1,8 +1,8 @@
 package objects.fill.service.interfaces;
 
-import java.util.List;
+import java.util.Map;
 
 public interface MainContainerService<T> {
 
-    List<T> getContainer();
+    Map<Class<?>, T> getContainer();
 }

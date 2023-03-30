@@ -6,7 +6,6 @@ import objects.fill.service.containers.DefaultBoxTypeContainer;
 import objects.fill.service.containers.DefaultObjectTypeContainer;
 import objects.fill.service.interfaces.BoxTypeContainerService;
 import objects.fill.service.interfaces.ObjectTypeContainerService;
-import objects.fill.types.interfaces.ClazzType;
 import objects.fill.types.box_type.BoxTypeFill;
 import objects.fill.types.object_type.ObjectTypeFill;
 import objects.fill.utils.ScanningForClassUtils;
@@ -14,7 +13,10 @@ import objects.fill.utils.ScanningForClassUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -25,28 +27,18 @@ import static objects.fill.utils.FieldUtils.doWithFields;
  */
 public class ElementCreationService {
 
-    private final Set<BoxTypeFill> containerBoxType = new HashSet<>();
+    private final Map<Class<?>, BoxTypeFill> containerBoxType = new HashMap<>();
 
-    private final Set<ObjectTypeFill> containerObjectType = new HashSet<>();
+    private final Map<Class<?>, ObjectTypeFill> containerObjectType = new HashMap<>();
 
     public static final String DEFAULT_LOCAL_CLASS_CREATION_PATH = "generated.fill";
 
     public ElementCreationService() {
         findLocalContainerForBoxType();
-        new DefaultBoxTypeContainer().getContainer()
-                .forEach(boxTypeFill -> {
-                    if (!this.containerBoxType.stream().map(ClazzType::getClazz).toList().contains(boxTypeFill.getClazz())) {
-                        this.containerBoxType.add(boxTypeFill);
-                    }
-                });
+        new DefaultBoxTypeContainer().getContainer().forEach(containerBoxType::putIfAbsent);
 
         findLocalContainerForObjectType();
-        new DefaultObjectTypeContainer().getContainer()
-                .forEach(objectTypeFill -> {
-                    if (!this.containerObjectType.stream().map(ClazzType::getClazz).toList().contains(objectTypeFill.getClazz())) {
-                        this.containerObjectType.add(objectTypeFill);
-                    }
-                });
+        new DefaultObjectTypeContainer().getContainer().forEach(containerObjectType::putIfAbsent);
     }
 
     public Object generateSingleValue(Class<?> fieldType, Fill fill) {
@@ -116,11 +108,12 @@ public class ElementCreationService {
                 .orElse(null);
     }
 
-    public static <T extends ClazzType> Optional<T> findClassInContainer(Class<?> fieldType, Set<T> container) {
-        return container
-                .stream()
-                .filter(types -> types.getClazz().isAssignableFrom(fieldType))
-                .findFirst();
+    public static <T> Optional<T> findClassInContainer(Class<?> fieldType, Map<Class<?>, T> container) {
+        Optional<Class<?>> clazzVal = container.keySet().stream().filter(types -> types.isAssignableFrom(fieldType)).findFirst();
+        if(container.containsKey(fieldType)) {
+            return Optional.ofNullable(container.get(fieldType));
+        }
+        return clazzVal.map(container::get);
     }
 
     private <V> Stream<V> fillInnerStream(Class<V> vClass, Fill fill) {
@@ -130,19 +123,17 @@ public class ElementCreationService {
     }
 
     private void findLocalContainerForBoxType() {
-        containerBoxType.addAll(ScanningForClassUtils.scanClassImplInterface(BoxTypeContainerService.class, DEFAULT_LOCAL_CLASS_CREATION_PATH)
+        ScanningForClassUtils.scanClassImplInterface(BoxTypeContainerService.class, DEFAULT_LOCAL_CLASS_CREATION_PATH)
                 .stream()
                 .map(BoxTypeContainerService::getContainer)
-                .flatMap(Collection::stream)
-                .toList());
+                .forEach(container -> container.forEach(containerBoxType::putIfAbsent));
     }
 
     private void findLocalContainerForObjectType() {
-        containerObjectType.addAll(ScanningForClassUtils.scanClassImplInterface(ObjectTypeContainerService.class, DEFAULT_LOCAL_CLASS_CREATION_PATH)
+        ScanningForClassUtils.scanClassImplInterface(ObjectTypeContainerService.class, DEFAULT_LOCAL_CLASS_CREATION_PATH)
                 .stream()
                 .map(ObjectTypeContainerService::getContainer)
-                .flatMap(Collection::stream)
-                .toList());
+                .forEach(container -> container.forEach(containerObjectType::putIfAbsent));
     }
 
     /**

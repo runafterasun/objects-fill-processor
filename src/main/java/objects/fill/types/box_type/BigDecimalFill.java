@@ -6,18 +6,13 @@ import java.math.BigDecimal;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static objects.fill.utils.RandomGenerator.*;
+import static objects.fill.utils.RandomGenerator.randomNum;
 
 public class BigDecimalFill implements BoxTypeFill {
 
     @Override
     public Object generate(Fill fill) {
         return BigDecimal.valueOf(Long.parseLong(randomNum(fill)));
-    }
-
-    @Override
-    public Class<?> getClazz() {
-        return BigDecimal.class;
     }
 
     @Override

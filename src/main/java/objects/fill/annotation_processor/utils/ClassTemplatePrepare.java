@@ -14,8 +14,8 @@ public class ClassTemplatePrepare {
         sb.append("import ").append(containerClassPath).append(";").append("\n");
     }
 
-    public static  void fillContainer(StringBuilder sb, String containerClassName) {
-        sb.append("container.add(new ").append(containerClassName).append("());\n");
+    public static  void fillContainer(StringBuilder sb, String containerClass, String containerClassName) {
+        sb.append("container.putIfAbsent(").append(containerClass).append(", new ").append(containerClassName).append("());\n");
     }
 
     public static  String getReadyClass(Map<String, String> classTemplateReplace) {

@@ -12,19 +12,19 @@ public class ClassTemplate {
             import #importInterface
             
             #interfaceImplementPath
-            import java.util.ArrayList;
-            import java.util.List;
+            import java.util.HashMap;
+            import java.util.Map;
                         
             public class #containerName implements #interfaceExtension {
                         
-                private List<#interfaceName> container;
+                private Map<Class<?>, #interfaceName> container;
                     
                 public #containerName() {
-                    container = new ArrayList<>();
+                    container = new HashMap<>();
                     #fillContainerByObjects
                 }
                 
-                 public List<#interfaceName> getContainer() {
+                 public Map<Class<?>, #interfaceName> getContainer() {
                         return container;
                  }
 

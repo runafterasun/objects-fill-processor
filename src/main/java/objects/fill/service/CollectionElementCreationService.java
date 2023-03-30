@@ -5,13 +5,14 @@ import objects.fill.service.containers.DefaultCollectionTypeContainer;
 import objects.fill.service.interfaces.CollectionTypeContainerService;
 import objects.fill.types.array.FillArray;
 import objects.fill.types.collection_type.CollectionTypeFill;
-import objects.fill.types.interfaces.ClazzType;
 import objects.fill.utils.ScanningForClassUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import static objects.fill.service.ElementCreationService.DEFAULT_LOCAL_CLASS_CREATION_PATH;
 import static objects.fill.service.ElementCreationService.findClassInContainer;
@@ -20,16 +21,11 @@ import static objects.fill.service.ElementCreationService.findClassInContainer;
  * Фабрика генерации случайных коллекций. Должна проходить по всему дереву зависимостей.
  */
 public class CollectionElementCreationService {
-    private final Set<CollectionTypeFill> containerCollectionType = new HashSet<>();
+    private final Map<Class<?>, CollectionTypeFill> containerCollectionType = new HashMap<>();
 
     public CollectionElementCreationService() {
         findLocalContainerForCollectionType();
-        new DefaultCollectionTypeContainer().getContainer()
-                .forEach(collectionTypeFill -> {
-                    if (!this.containerCollectionType.stream().map(ClazzType::getClazz).toList().contains(collectionTypeFill.getClazz())) {
-                        this.containerCollectionType.add(collectionTypeFill);
-                    }
-                });
+        new DefaultCollectionTypeContainer().getContainer().forEach(containerCollectionType::putIfAbsent);
     }
 
     public Object generateCollection(Field field, Fill fill) {
@@ -53,10 +49,9 @@ public class CollectionElementCreationService {
 
 
     private void findLocalContainerForCollectionType() {
-        containerCollectionType.addAll(ScanningForClassUtils.scanClassImplInterface(CollectionTypeContainerService.class, DEFAULT_LOCAL_CLASS_CREATION_PATH)
+        ScanningForClassUtils.scanClassImplInterface(CollectionTypeContainerService.class, DEFAULT_LOCAL_CLASS_CREATION_PATH)
                 .stream()
                 .map(CollectionTypeContainerService::getContainer)
-                .flatMap(Collection::stream)
-                .toList());
+                .forEach(container -> container.forEach(containerCollectionType::putIfAbsent));
     }
 }

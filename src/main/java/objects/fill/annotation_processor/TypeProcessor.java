@@ -8,12 +8,15 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static objects.fill.annotation_processor.utils.ClassTemplatePrepare.fillContainer;
@@ -40,8 +43,14 @@ public class TypeProcessor extends AbstractProcessor {
             StringBuilder containerImportPath = new StringBuilder();
 
             for (Element element : roundEnv.getElementsAnnotatedWith(typeElement)) {
-                fillContainer(containerFill, element.getSimpleName().toString());
-                fillImportContainer(containerImportPath, element.toString());
+
+                var annotationValue = getAnnotationValue(element);
+                if(annotationValue.isPresent()) {
+                    var valAnnotation = annotationValue.get().toString();
+                    var elementName = element.getSimpleName().toString();
+                    fillContainer(containerFill, valAnnotation, elementName);
+                    fillImportContainer(containerImportPath, element.toString());
+                }
             }
 
             templateReplaceParameters.put("#fillContainerByObjects", containerFill.toString());
@@ -53,6 +62,13 @@ public class TypeProcessor extends AbstractProcessor {
         }
 
         return true;
+    }
+
+    private Optional<? extends AnnotationValue> getAnnotationValue(Element element) {
+        return element.getAnnotationMirrors().stream()
+                .map(annotationMirror -> annotationMirror.getElementValues().values())
+                .flatMap(Collection::stream)
+                .findFirst();
     }
 
     private void generateClass(Map<String, String> classTemplateReplace) {

@@ -6,21 +6,23 @@ import objects.fill.types.collection_type.FillListCollection;
 import objects.fill.types.collection_type.MapFill;
 import objects.fill.types.collection_type.FillSetCollection;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DefaultCollectionTypeContainer implements CollectionTypeContainerService {
 
-    private final List<CollectionTypeFill> container;
+    private final Map<Class<?>, CollectionTypeFill> container;
 
     public DefaultCollectionTypeContainer() {
-        container = new ArrayList<>();
-        container.add(new FillListCollection());
-        container.add(new MapFill());
-        container.add(new FillSetCollection());
+        container = new HashMap<>();
+        container.putIfAbsent(List.class, new FillListCollection());
+        container.putIfAbsent(Map.class, new MapFill());
+        container.putIfAbsent(Set.class, new FillSetCollection());
     }
 
-    public List<CollectionTypeFill> getContainer() {
+    public Map<Class<?>, CollectionTypeFill> getContainer() {
         return container;
     }
 
