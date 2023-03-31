@@ -10,10 +10,7 @@ public class FillArray {
     @SuppressWarnings("unchecked")
     public <T> Object[] createArray(Class<T> fieldType, Fill fill) {
 
-        Class<?> componentType = fieldType.getComponentType();
-        if(componentType == null) {
-            componentType = fieldType;
-        }
+        Class<?> componentType = fieldType.getComponentType() == null ? fieldType : fieldType.getComponentType();
 
         T[] genericArray = (T[]) Array.newInstance(componentType, fill.getCollectionSize());
         for (int i = 0; i < genericArray.length; i++) {

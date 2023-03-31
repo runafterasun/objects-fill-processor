@@ -194,7 +194,7 @@ RandomValue.fillCollection(genericTypeHashSet, Fill.object(GenericType.class)
 ##### Create box type
 * Create and register own type generator
 ```java
-@BoxType
+@BoxType(clazz = Parent.class)
 public class ParentProcessorCreateRandom implements BoxTypeFill {
 
     @Override
@@ -209,18 +209,15 @@ public class ParentProcessorCreateRandom implements BoxTypeFill {
         return IntStream
                 .range(0, fill.getCollectionSize())
                 .mapToObj(i -> generate(fill));
-    }
-
-    @Override
-    public Class<?> getClazz() {
-        return Parent.class;
+        //or 
+        return createStreamWithVal.apply(fill).apply(generate(fill));
     }
 }
 ```
 ##### Create collection
 * Create and register own type collection
 ```java
-@CollectionType
+@CollectionType(clazz = Set.class)
 public class FillSetCollection implements CollectionTypeFill {
 
     @Override
@@ -231,18 +228,12 @@ public class FillSetCollection implements CollectionTypeFill {
                 .collect(Collectors.toSet());
     }
 
-    @Override
-    public Class<?> getClazz() {
-        return Set.class;
-    }
-
 }
 ```
 
 ## What next?? 
 * Collection annotation processor is difficult for overriding.
 * I think about split map and simple collections.
-* Add converter processor and create some default converters (To json or another).
 * Your issues.
 
 ## Support
