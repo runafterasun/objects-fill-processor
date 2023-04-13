@@ -5,13 +5,21 @@ import objects.fill.annotation_processor.exceptions.FillException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class Fill {
 
     private Fill() {}
 
-    private Fill(Object objectz, Class<?> clazz, List<String> excludedFieldName, Integer deep, Type[] genericType, Integer collectionSize, Integer valueLength) {
+    private Fill(Object objectz,
+                 Class<?> clazz,
+                 List<String> excludedFieldName,
+                 Integer deep,
+                 Map<String, Type> genericType,
+                 Integer collectionSize,
+                 Integer valueLength) {
         this.objectz = objectz;
         this.clazz = clazz;
         this.excludedFieldName = excludedFieldName;
@@ -56,10 +64,10 @@ public final class Fill {
     /**
      * genericType тип обобщения
      */
-    private Type[] genericType;
+    private Map<String, Type> genericType;
 
 
-    public Type[] getGenericType() {
+    public Map<String, Type> getGenericType() {
         return genericType;
     }
 
@@ -68,8 +76,14 @@ public final class Fill {
         this.deep = deep;
     }
 
-    public void setGenericType(Type[] genericType) {
+    public void setGenericType(Map<String, Type> genericType) {
         this.genericType = genericType;
+    }
+
+    public void setGenericType(String genericName, Type genericType) {
+        if(this.genericType == null)
+            this.genericType = new HashMap<>();
+        this.genericType.putIfAbsent(genericName, genericType);
     }
 
     public Class<?> getClazz() {
@@ -132,7 +146,7 @@ public final class Fill {
 
         private Integer valueLength = 5;
 
-        private Type[] genericType;
+        private  Map<String, Type> genericType = new HashMap<>();
 
         public FillBuilder collectionSize(Integer collectionSize) {
             checkPositive(collectionSize);
@@ -146,14 +160,19 @@ public final class Fill {
             return this;
         }
 
-        public FillBuilder withGeneric(Type[] genericType) {
+        public FillBuilder withGeneric(String genericName, Type genericType) {
+            this.genericType.putIfAbsent(genericName, genericType);
+            return this;
+        }
+
+        public FillBuilder withGeneric(Map<String, Type> genericType) {
             this.genericType = genericType;
             return this;
         }
 
-        public FillBuilder withGeneric(Class<?> genericClass) {
+        public FillBuilder withGeneric(String genericName, Class<?> genericClass) {
             if (genericClass != null) {
-                this.genericType = new Type[]{genericClass};
+                this.genericType.putIfAbsent(genericName, genericClass);
             }
             return this;
         }

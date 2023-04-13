@@ -13,6 +13,7 @@ public class FillArray {
         Class<?> componentType = fieldType.getComponentType() == null ? fieldType : fieldType.getComponentType();
 
         T[] genericArray = (T[]) Array.newInstance(componentType, fill.getCollectionSize());
+
         for (int i = 0; i < genericArray.length; i++) {
             genericArray[i] = (T) new ElementCreationService().generateSingleValue(componentType, fill);
         }

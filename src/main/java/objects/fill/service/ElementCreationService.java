@@ -13,13 +13,13 @@ import objects.fill.utils.ScanningForClassUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static objects.fill.service.CollectionElementCreationService.getTypeClass;
 import static objects.fill.utils.FieldUtils.doWithFields;
 
 /**
@@ -42,19 +42,18 @@ public class ElementCreationService {
     }
 
     public Object generateSingleValue(Class<?> fieldType, Fill fill) {
-        Class<?> collectionGenericType = getCollectionGenericType(fieldType, fill);
 
-        Optional<BoxTypeFill> classForGenerationBoxType = findClassInContainer(collectionGenericType, containerBoxType);
+        Optional<BoxTypeFill> classForGenerationBoxType = findClassInContainer(fieldType, containerBoxType);
         if (classForGenerationBoxType.isPresent()) {
             return classForGenerationBoxType.get().generate(fill);
         }
 
-        Optional<ObjectTypeFill> classForGenerationObjectType = findClassInContainer(collectionGenericType, containerObjectType);
+        Optional<ObjectTypeFill> classForGenerationObjectType = findClassInContainer(fieldType, containerObjectType);
         if (classForGenerationObjectType.isPresent()) {
-            return classForGenerationObjectType.get().generate(collectionGenericType, fill);
+            return classForGenerationObjectType.get().generate(fieldType, fill);
         }
 
-        return createInstance(collectionGenericType, fill);
+        return createInstance(fieldType, fill);
     }
 
     @SuppressWarnings("unchecked")
@@ -65,8 +64,14 @@ public class ElementCreationService {
 
         if (genericCollectionType.isPresent()) {
             try {
-                Class<?> collectionGenericType = getCollectionGenericType(genericCollectionType.get(), fill);
-                return (Stream<T>) generateCollectionByClassType(fill, collectionGenericType);
+                Class<?> type;
+                try {
+                    type = (Class<?>) genericCollectionType.get();
+                } catch (Exception ex) {
+                    type = getTypeClass(field, fill);
+                }
+
+                return (Stream<T>) generateCollectionByClassType(fill, type);
 
             } catch (Exception ex) {
                 return Stream.empty();
@@ -74,6 +79,7 @@ public class ElementCreationService {
         }
         return Stream.empty();
     }
+
 
     private Stream<?> generateCollectionByClassType(Fill fill, Class<?> collectionGenericType) {
         Optional<BoxTypeFill> classForGenerationBoxType = findClassInContainer(collectionGenericType, containerBoxType);
@@ -87,25 +93,6 @@ public class ElementCreationService {
         }
 
         return fillInnerStream(collectionGenericType, fill);
-    }
-
-    private Class<?> getCollectionGenericType(Type genericCollectionType, Fill fill) {
-        try {
-            //Добавил такую кривую проверку так как идет извлечение типов. А все объекты являются по умолчанию наследниками java.lang.Object
-            if (genericCollectionType.getTypeName().equals("java.lang.Object")) {
-                return getGenericClass(fill);
-            }
-            return (Class<?>) genericCollectionType;
-        } catch (Exception ex) {
-            return getGenericClass(fill);
-        }
-    }
-
-    private static Class<?> getGenericClass(Fill fill) {
-        return (Class<?>) Arrays
-                .stream(fill.getGenericType())
-                .findFirst()
-                .orElse(null);
     }
 
     public static <T> Optional<T> findClassInContainer(Class<?> fieldType, Map<Class<?>, T> container) {

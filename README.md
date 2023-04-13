@@ -145,30 +145,17 @@ assert simpleBoxTypeTestObj.getaLong() == null;
 ```
 
 ##### Generic fill
-* Fill class or object with one generic class
+* Fill class or object with generic class
 ```java
-GenericType<String> collectionType = new GenericType<>();
+GenericType<String, Integer> collectionType = new GenericType<>();
 
 collectionType = RandomValue.fill(Fill.object(collectionType)
-                                      .withGeneric(String.class).gen());
+                                      .withGeneric("T", String.class)
+                                      .withGeneric("K", Integer.class).gen());
 
 assert collectionType.getGenericList() != null;
 assert collectionType.getGeneric() != null;
 
-//or you can set as an object for generator root test class
-
-public class GenericTypeTest {
-
-    GenericType<String> collectionTypes = new GenericType<>();
-
-    @Test
-    public void fillGenericObject() {
-        GenericTypeTest collectionType = RandomValue.fill(Fill.object(this).gen());
-
-        assert collectionType.collectionTypes.getGeneric() != null;
-        assert collectionType.collectionTypes.getGenericList().size() == 5;
-    }
-}
 ```
 ##### Collection fill
 * Create collections like List, Set and some Arrays
@@ -186,7 +173,7 @@ SimpleArray[] simpleArray = RandomValue.fillArray(Fill.object(SimpleArray.class)
 GenericType<String> collectionType = new GenericType<>();
 Set<GenericType<String>> genericTypeHashSet = new HashSet<>();
 RandomValue.fillCollection(genericTypeHashSet, Fill.object(GenericType.class)
-                                                    .withGeneric(String.class).gen());
+                                                    .withGeneric("T", String.class).gen());
 ```
 
 ## Annotation processor
