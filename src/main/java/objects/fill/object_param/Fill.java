@@ -11,8 +11,6 @@ import java.util.Map;
 
 public final class Fill {
 
-    private Fill() {}
-
     private Fill(Object objectz,
                  Class<?> clazz,
                  List<String> excludedFieldName,

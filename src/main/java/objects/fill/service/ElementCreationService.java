@@ -70,7 +70,6 @@ public class ElementCreationService {
                 } catch (Exception ex) {
                     type = getTypeClass(field, fill);
                 }
-
                 return (Stream<T>) generateCollectionByClassType(fill, type);
 
             } catch (Exception ex) {
