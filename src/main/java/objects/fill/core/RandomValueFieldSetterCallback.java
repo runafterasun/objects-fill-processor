@@ -1,5 +1,13 @@
 package objects.fill.core;
 
+import objects.fill.object_param.Fill;
+import objects.fill.service.CollectionElementCreationService;
+import objects.fill.utils.FieldCallback;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.function.Function;
+
 /**
  A necessary class for reflection to traverse fields.
  */

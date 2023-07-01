@@ -19,32 +19,32 @@ public final class Fill {
 
      The object to be filled with random data.
      */
-    private final Object objectz;
+    private Object objectz;
     /**
 
      The class of the object to be created and filled.
      */
-    private final Class<?> clazz;
+    private Class<?> clazz;
     /**
 
      The names of fields excluded from filling.
      */
-    private final List<String> excludedFieldName;
+    private List<String> excludedFieldName;
     /**
 
      The depth limit for traversing dependency trees or preventing cyclic dependencies.
      */
-    private final Integer deep;
+    private Integer deep;
     /**
 
      The number of objects to be created in a collection.
      */
-    private final Integer collectionSize;
+    private Integer collectionSize;
     /**
 
      The length of randomly generated values.
      */
-    private final Integer valueLength;
+    private Integer valueLength;
     /**
 
      The generic types used in the object.
@@ -182,12 +182,12 @@ public final class Fill {
 
          The object to be filled.
          */
-        private final Object objectz;
+        private Object objectz;
         /**
 
          The class to be created and filled.
          */
-        private final Class<?> clazz;
+        private Class<?> clazz;
         /**
 
          The names of excluded fields.
@@ -232,7 +232,6 @@ public final class Fill {
                 this.clazz = clazz;
                 this.objectz = clazz.getDeclaredConstructor().newInstance();
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ignore) {
-// Handle exception
             }
         }
         /**
