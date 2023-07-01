@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Ищем и создаем объект с списком классов с уникальным поведением.
- * */
+ * Searches for and creates an object with a list of classes with unique behavior.
+ */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.SOURCE)
 public @interface ObjectType {

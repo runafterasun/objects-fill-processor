@@ -5,7 +5,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.apache.commons.lang3.ArrayUtils.EMPTY_FIELD_ARRAY;
-
+/**
+ * Utility class for working with fields in Java classes.
+ */
 public class FieldUtils {
 
     private FieldUtils() {
@@ -13,7 +15,15 @@ public class FieldUtils {
     }
 
     private static final Map<Class<?>, Field[]> declaredFieldsCache = new ConcurrentHashMap<>(256);
-
+    /**
+     * Invokes the given FieldCallback for each field in the specified class and its superclasses.
+     *
+     * @param clazz the class to process fields for
+     * @param fc    the FieldCallback to invoke for each field
+     * @throws IllegalArgumentException    if the class is null
+     * @throws IllegalAccessException    if the FieldCallback encounters an illegal access to a field
+     * @throws IllegalStateException   if the FieldCallback encounters an error while processing a field
+     */
     public static void doWithFields(Class<?> clazz, FieldCallback fc) {
         Class<?> targetClass = clazz;
         do {
@@ -30,6 +40,15 @@ public class FieldUtils {
         }
         while (targetClass != null && targetClass != Object.class);
     }
+    /**
+     * Retrieves the declared fields of the specified class.
+     * The fields are cached in the declaredFieldsCache map for performance optimization.
+     *
+     * @param clazz the class to retrieve declared fields from
+     * @return an array of Field objects representing the declared fields of the class
+     * @throws IllegalArgumentException if the class is null
+     * @throws IllegalStateException    if an error occurs while introspecting the class
+     */
     private static Field[] getDeclaredFields(Class<?> clazz) {
         if (clazz == null)
             throw new IllegalArgumentException("Class must not be null");
