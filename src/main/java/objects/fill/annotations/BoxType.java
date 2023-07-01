@@ -6,12 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Ищем и создаем объект с списком классов оберток.
- * */
+ * Searches for and creates an object with a specific box type class.
+ */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.SOURCE)
 public @interface BoxType {
 
     Class<?> clazz();
-
 }

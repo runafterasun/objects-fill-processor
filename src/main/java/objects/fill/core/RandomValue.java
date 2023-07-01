@@ -9,7 +9,7 @@ import java.util.Collection;
 import static objects.fill.utils.FieldUtils.doWithFields;
 
 /**
- * Класс предназначен для наполнения pojo классов случайными данными.
+ The RandomValue class is designed to populate POJO classes with random data.
  */
 public final class RandomValue {
 
@@ -18,7 +18,11 @@ public final class RandomValue {
     }
 
     /**
-     * @param fill объект содержащий всю информацию по объекту.
+
+     Fills the given object with random values.
+     @param fill The object containing all the information about the target object.
+     @param <T> The type of the target object.
+     @return The filled object.
      */
     @SuppressWarnings("unchecked")
     public static <T> T fill(Fill fill) {
@@ -27,8 +31,12 @@ public final class RandomValue {
     }
 
     /**
-     * @param collection   Тип коллекции для наполнения.
-     * @param fill объект содержащий всю информацию по файлу.
+
+     Fills the given collection with random values.
+     @param collection The collection type for populating.
+     @param fill The object containing all the information about the target collection.
+     @param <T> The type of the collection.
+     @param <K> The type of the elements in the collection.
      */
     @SuppressWarnings({"unchecked", "unused"})
     public static <T extends Collection<K>, K> void fillCollection(T collection, Fill fill) {
@@ -41,7 +49,11 @@ public final class RandomValue {
     }
 
     /**
-     * @param fill объект содержащий всю информацию по файлу.
+
+     Creates and fills an array with random values.
+     @param fill The object containing all the information about the target array.
+     @param <T> The type of the elements in the array.
+     @return The filled array.
      */
     @SuppressWarnings({"unchecked", "unused"})
     public static <T> T[] fillArray(Fill fill) {
@@ -49,7 +61,11 @@ public final class RandomValue {
     }
 
     /**
-     * @param fill объект содержащий всю информацию по файлу.
+
+     Generates a single random value.
+     @param fill The object containing all the information about the target value.
+     @param <K> The type of the value.
+     @return The generated value.
      */
     @SuppressWarnings({"unchecked", "unused"})
     public static <K> K fillSingleVal(Fill fill) {

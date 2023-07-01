@@ -2,11 +2,7 @@ package objects.fill.annotation_processor;
 
 import com.google.auto.service.AutoService;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Processor;
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
+import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
@@ -19,9 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static objects.fill.annotation_processor.utils.ClassTemplatePrepare.fillContainer;
-import static objects.fill.annotation_processor.utils.ClassTemplatePrepare.fillImportContainer;
-import static objects.fill.annotation_processor.utils.ClassTemplatePrepare.getReadyClass;
+import static objects.fill.annotation_processor.utils.ClassTemplatePrepare.*;
 
 @SupportedAnnotationTypes("objects.fill.annotations.*")
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
@@ -30,7 +24,13 @@ import static objects.fill.annotation_processor.utils.ClassTemplatePrepare.getRe
 public class TypeProcessor extends AbstractProcessor {
 
     private static final String CLASS_TYPE = "Container";
-
+    /**
+     * Processes the annotations and generates template classes.
+     *
+     * @param annotations the set of annotations being processed
+     * @param roundEnv the round environment
+     * @return true to indicate that the annotations have been processed
+     */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
@@ -63,14 +63,23 @@ public class TypeProcessor extends AbstractProcessor {
 
         return true;
     }
-
+    /**
+     * Retrieves the value of the annotation from the given element.
+     *
+     * @param element the element containing the annotation
+     * @return the optional annotation value
+     */
     private Optional<? extends AnnotationValue> getAnnotationValue(Element element) {
         return element.getAnnotationMirrors().stream()
                 .map(annotationMirror -> annotationMirror.getElementValues().values())
                 .flatMap(Collection::stream)
                 .findFirst();
     }
-
+    /**
+     * Generates the template class based on the provided class template replacements.
+     *
+     * @param classTemplateReplace the map of class template replacements
+     */
     private void generateClass(Map<String, String> classTemplateReplace) {
         try {
             JavaFileObject javaFileObject = processingEnv.getFiler().createSourceFile(classTemplateReplace.get("#containerName"));

@@ -1,21 +1,8 @@
 package objects.fill.service.containers;
 
 import objects.fill.service.interfaces.BoxTypeContainerService;
-import objects.fill.types.box_type.BigDecimalFill;
-import objects.fill.types.box_type.BooleanFill;
-import objects.fill.types.box_type.BoxTypeFill;
-import objects.fill.types.box_type.CharacterFill;
-import objects.fill.types.box_type.DateFill;
-import objects.fill.types.box_type.DoubleFill;
-import objects.fill.types.box_type.IntegerFill;
-import objects.fill.types.box_type.LongFill;
-import objects.fill.types.box_type.StringFill;
-import objects.fill.types.box_type.UUIDFill;
-import objects.fill.types.primitive_type.PrimitiveBoolean;
-import objects.fill.types.primitive_type.PrimitiveChar;
-import objects.fill.types.primitive_type.PrimitiveDouble;
-import objects.fill.types.primitive_type.PrimitiveInt;
-import objects.fill.types.primitive_type.PrimitiveLong;
+import objects.fill.types.box_type.*;
+import objects.fill.types.primitive_type.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -23,10 +10,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+
+ The DefaultBoxTypeContainer class implements the BoxTypeContainerService interface
+
+ and provides a default implementation of the container for BoxTypeFill instances.
+
+ It contains mappings between Class objects and their respective BoxTypeFill implementations.
+ */
 public class DefaultBoxTypeContainer implements BoxTypeContainerService {
 
     private final Map<Class<?>, BoxTypeFill> container;
+    /**
 
+     Constructs a new DefaultBoxTypeContainer and initializes the container with default mappings.
+     */
     public DefaultBoxTypeContainer() {
         container = new HashMap<>();
         container.putIfAbsent(BigDecimal.class, new BigDecimalFill());
@@ -45,7 +43,11 @@ public class DefaultBoxTypeContainer implements BoxTypeContainerService {
         container.putIfAbsent(char.class, new PrimitiveChar());
 
     }
+    /**
 
+     Returns the container that holds the mappings between Class objects and BoxTypeFill implementations.
+     @return The container.
+     */
     public Map<Class<?>, BoxTypeFill>  getContainer() {
         return container;
     }
