@@ -35,6 +35,9 @@ public class ElementCreationService {
 
     private final Map<Class<?>, ObjectTypeFill> containerObjectType = new HashMap<>();
 
+    /**
+     * DEFAULT_LOCAL_CLASS_CREATION_PATH
+     */
     public static final String DEFAULT_LOCAL_CLASS_CREATION_PATH = "generated.fill";
 
     /**

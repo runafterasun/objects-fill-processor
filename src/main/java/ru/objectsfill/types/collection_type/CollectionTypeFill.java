@@ -6,6 +6,9 @@ import ru.objectsfill.service.ElementCreationService;
 import java.lang.reflect.Field;
 import java.util.stream.Stream;
 
+/**
+ * Interface for generating a value of the corresponding collection type.
+ */
 public interface CollectionTypeFill {
 
     /**

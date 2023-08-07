@@ -4,6 +4,9 @@ import ru.objectsfill.object_param.Fill;
 
 import java.util.stream.Stream;
 
+/**
+ * interface ObjectCollectionFillExtension
+ */
 public interface ObjectCollectionFillExtension {
 
     /**

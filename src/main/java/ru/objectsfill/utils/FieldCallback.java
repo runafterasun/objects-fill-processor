@@ -2,6 +2,9 @@ package ru.objectsfill.utils;
 
 import java.lang.reflect.Field;
 
+/**
+ A necessary interface for reflection to traverse fields.
+ */
 @FunctionalInterface
 public interface FieldCallback {
     /**

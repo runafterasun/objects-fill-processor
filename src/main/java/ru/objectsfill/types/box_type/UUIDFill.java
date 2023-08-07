@@ -5,7 +5,9 @@ import ru.objectsfill.object_param.Fill;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-
+/**
+ * interface ObjectCollectionFillExtension
+ */
 public class UUIDFill implements BoxTypeFill {
 
     /**

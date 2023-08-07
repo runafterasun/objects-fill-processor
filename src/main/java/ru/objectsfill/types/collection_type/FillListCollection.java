@@ -5,6 +5,9 @@ import ru.objectsfill.object_param.Fill;
 import java.lang.reflect.Field;
 
 
+/**
+ * class FillListCollection
+ */
 public class FillListCollection implements CollectionTypeFill {
 
     /**

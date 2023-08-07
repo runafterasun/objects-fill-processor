@@ -1,6 +1,6 @@
 plugins {
-    id 'org.gradle.java'
-    id 'org.gradle.maven-publish'
+    id 'signing'
+    id 'maven-publish'
     id 'java'
 }
 
@@ -25,16 +25,71 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId = 'ru.objectsfill'
-            artifactId = 'objects-fill-processor'
+            artifactId = "objects-fill-processor"
+            groupId = "ru.objectsfill"
             version = "0.0.1"
-            from components.java
+            from(components["java"])
+            pom {
+                packaging = "jar"
+                name.set("Objects Fill Processor")
+                url.set("https://github.com/runafterasun/objects-fill-processor")
+                description.set("Fill objects with random values")
+
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:https://github.com/runafterasun/objects-fill-processor.git")
+                    developerConnection.set("scm:git@github.com:runafterasun/objects-fill-processor.git")
+                    url.set("https://github.com/runafterasun/objects-fill-processor")
+                }
+
+                developers {
+                    developer {
+                        id.set("Stereo")
+                        name.set("Igor Saenko")
+                        email.set("runafterasun@gmail.com")
+                    }
+                }
+            }
         }
     }
     repositories {
-        mavenLocal()
+        maven {
+            URI releasesUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            URI snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            if (version.toString().endsWith("SNAPSHOT")) {
+                url = snapshotsUrl
+            } else {
+                url = releasesUrl
+            }
+            credentials {
+                username = project.properties["ossrhUsername"].toString()
+                password = project.properties["ossrhPassword"].toString()
+            }
+        }
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
     }
 }

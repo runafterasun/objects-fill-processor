@@ -6,6 +6,9 @@ import java.util.stream.Stream;
 
 import static ru.objectsfill.utils.RandomGenerator.randomNum;
 
+/**
+ * Class for generating a value of the double type
+ */
 public class DoubleFill implements BoxTypeFill {
 
     /**

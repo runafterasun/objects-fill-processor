@@ -6,6 +6,9 @@ import java.util.stream.Stream;
 
 import static ru.objectsfill.utils.RandomGenerator.randomNum;
 
+/**
+ * class LongFill
+ */
 public class LongFill implements BoxTypeFill {
 
     /**

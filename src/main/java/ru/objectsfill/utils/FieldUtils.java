@@ -21,7 +21,6 @@ public class FieldUtils {
      * @param clazz the class to process fields for
      * @param fc    the FieldCallback to invoke for each field
      * @throws IllegalArgumentException    if the class is null
-     * @throws IllegalAccessException    if the FieldCallback encounters an illegal access to a field
      * @throws IllegalStateException   if the FieldCallback encounters an error while processing a field
      */
     public static void doWithFields(Class<?> clazz, FieldCallback fc) {

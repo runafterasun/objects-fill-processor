@@ -6,6 +6,9 @@ import java.util.stream.Stream;
 
 import static ru.objectsfill.utils.RandomGenerator.randomAlphabet;
 
+/**
+ *  class StringFill
+ */
 public class StringFill implements BoxTypeFill {
 
     /**

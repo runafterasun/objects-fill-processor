@@ -7,6 +7,9 @@ import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * Interface for generating a value of the corresponding boxed type.
+ */
 public interface BoxTypeFill extends BoxCollectionFillExtension {
 
     /**

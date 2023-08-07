@@ -12,5 +12,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 public @interface CollectionType {
 
+    /**
+     * class information for registering the box.
+     * @return the class
+     */
     Class<?> clazz();
 }

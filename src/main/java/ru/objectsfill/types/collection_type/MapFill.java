@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * class MapFill
+ */
 public class MapFill implements CollectionTypeFill {
 
     /**
