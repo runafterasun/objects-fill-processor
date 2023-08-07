@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'ru.objectsfill'
-version '0.0.1'
+version '0.0.2'
 
 repositories {
     mavenLocal()
@@ -26,15 +26,28 @@ test {
     useJUnitPlatform()
 }
 
+tasks.register('sourceJar', Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = "sources"
+}
+
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        maven(MavenPublication) {publication ->
+            artifact sourceJar
+            artifact javadocJar
             artifactId = "objects-fill-processor"
             groupId = "ru.objectsfill"
-            version = "0.0.1"
+            version = "0.0.2"
             from(components["java"])
             pom {
-                packaging = "jar"
+                packaging 'jar'
                 name.set("Objects Fill Processor")
                 url.set("https://github.com/runafterasun/objects-fill-processor")
                 description.set("Fill objects with random values")
@@ -79,17 +92,7 @@ publishing {
     }
 }
 
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
 signing {
-    sign publishing.publications.mavenJava
+    sign publishing.publications
 }
 
-javadoc {
-    if(JavaVersion.current().isJava9Compatible()) {
-        options.addBooleanOption('html5', true)
-    }
-}

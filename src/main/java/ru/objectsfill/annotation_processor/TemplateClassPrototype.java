@@ -21,9 +21,9 @@ public final class TemplateClassPrototype {
     private static Map<String, String> getBoxTypeClassCreationParameters() {
         return new Params()
                 .setInterfaceName("BoxTypeFill")
-                .setImportInterface("objects.fill.types.box_type.BoxTypeFill;")
+                .setImportInterface("ru.objectsfill.types.box_type.BoxTypeFill;")
                 .setInterfaceExtension("BoxTypeContainerService")
-                .setInterfaceImplementPath("import objects.fill.service.interfaces.BoxTypeContainerService;")
+                .setInterfaceImplementPath("import ru.objectsfill.service.interfaces.BoxTypeContainerService;")
                 .getParameters();
     }
 
@@ -35,9 +35,9 @@ public final class TemplateClassPrototype {
     private static Map<String, String> getObjectTypeClassCreationParameters() {
         return new Params()
                 .setInterfaceName("ObjectTypeFill")
-                .setImportInterface("objects.fill.types.object_type.ObjectTypeFill;")
+                .setImportInterface("ru.objectsfill.types.object_type.ObjectTypeFill;")
                 .setInterfaceExtension("ObjectTypeContainerService")
-                .setInterfaceImplementPath("import objects.fill.service.interfaces.ObjectTypeContainerService;")
+                .setInterfaceImplementPath("import ru.objectsfill.service.interfaces.ObjectTypeContainerService;")
                 .getParameters();
     }
 
@@ -49,9 +49,9 @@ public final class TemplateClassPrototype {
     private static Map<String, String> getCollectionTypeClassCreationParameters() {
         return new Params()
                 .setInterfaceName("CollectionTypeFill")
-                .setImportInterface("objects.fill.types.collection_type.CollectionTypeFill;")
+                .setImportInterface("ru.objectsfill.types.collection_type.CollectionTypeFill;")
                 .setInterfaceExtension("CollectionTypeContainerService")
-                .setInterfaceImplementPath("import objects.fill.service.interfaces.CollectionTypeContainerService;")
+                .setInterfaceImplementPath("import ru.objectsfill.service.interfaces.CollectionTypeContainerService;")
                 .getParameters();
     }
 

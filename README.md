@@ -25,13 +25,18 @@ This project can help with generation some random information to object.
 [Support](#support)
 
 ## How to use
-(Maven central will be later)
-1. Download to IDE
-2. Use gradle command gradle publishMavenJavaPublicationToMavenLocal
-3. Add to dependency. Will work without annotation processor, but you can't create own types.
+From maven central
+```xml
+<dependency>
+  <groupId>ru.objectsfill</groupId>
+  <artifactId>objects-fill-processor</artifactId>
+  <version>0.0.2</version>
+</dependency>
+```
+
 ```gradle
-testImplementation 'objects.fill:objects-fill-processor:0.0.1'
-testAnnotationProcessor 'objects.fill:objects-fill-processor:0.0.1'
+testImplementation 'ru.objectsfill:objects-fill-processor:0.0.2'
+testAnnotationProcessor 'ru.objectsfill:objects-fill-processor:0.0.2'
 ```
 4. Read doc 
 

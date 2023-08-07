@@ -19,7 +19,7 @@ import java.util.Set;
 /**
  * generate class from template
  */
-@SupportedAnnotationTypes("objects.fill.annotations.*")
+@SupportedAnnotationTypes("ru.objectsfill.annotations.*")
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @AutoService(Processor.class)
 @SuppressWarnings("unused")
