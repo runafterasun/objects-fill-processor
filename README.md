@@ -1,11 +1,26 @@
 # Object Fill With Random Value
+## How to use
+From maven central <br>
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/ru.objectsfill/objects-fill-processor/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ru.objectsfill/objects-fill-processor)
 ![Build Status](https://github.com/runafterasun/objects-fill-processor/actions/workflows/gradle.yml/badge.svg)
 
+```xml
+<dependency>
+  <groupId>ru.objectsfill</groupId>
+  <artifactId>objects-fill-processor</artifactId>
+  <version>x.x.x</version>
+</dependency>
+```
+
+```gradle
+testImplementation 'ru.objectsfill:objects-fill-processor:x.x.x'
+testAnnotationProcessor 'ru.objectsfill:objects-fill-processor:x.x.x'
+```
+4. Read doc
+________________________________________________________________________
 This project can help with generation some random information to object.
 
-[How to use](#how-to-use) 
-
-[The problems](#the-problem)
+[Project challenges](#project-challenges)
 - [Create POJO](#create-pojo)
 - [Deep recursion](#deep-recursion)
 - [Fill collection](#fill-collection)
@@ -24,25 +39,7 @@ This project can help with generation some random information to object.
 
 [Support](#support)
 
-## How to use
-From maven central
-https://search.maven.org/artifact/ru.objectsfill/objects-fill-processor
-
-```xml
-<dependency>
-  <groupId>ru.objectsfill</groupId>
-  <artifactId>objects-fill-processor</artifactId>
-  <version>x.x.x</version>
-</dependency>
-```
-
-```gradle
-testImplementation 'ru.objectsfill:objects-fill-processor:x.x.x'
-testAnnotationProcessor 'ru.objectsfill:objects-fill-processor:x.x.x'
-```
-4. Read doc 
-
-## The problems
+## Project challenges
 
 ##### Create POJO 
 * Create POJO or Entity file that need to fill with random data.
@@ -181,6 +178,13 @@ GenericType<String> collectionType = new GenericType<>();
 Set<GenericType<String>> genericTypeHashSet = new HashSet<>();
 RandomValue.fillCollection(genericTypeHashSet, Fill.object(GenericType.class)
                                                     .withGeneric("T", String.class).gen());
+```
+
+##### primitive array fill
+* Create primitive array like. Any primitive type. Primitive type also can filled in object
+```java
+Object[] fillInt = RandomValue.fillArray(Fill.object(int[].class).gen());
+
 ```
 
 ## Annotation processor

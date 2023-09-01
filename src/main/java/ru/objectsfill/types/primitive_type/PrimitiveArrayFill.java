@@ -31,6 +31,7 @@ public class PrimitiveArrayFill {
      * @param fill the Fill object containing the configuration for generating values
      * @param componentName name of the component
      * @param field for fill
+     * @throws IllegalAccessException if access to the field is denied
      */
     public static void fillPrimitiveArrayField(Fill fill, String componentName, Field field) throws IllegalAccessException {
         field.setAccessible(true);
