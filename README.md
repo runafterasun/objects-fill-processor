@@ -26,17 +26,19 @@ This project can help with generation some random information to object.
 
 ## How to use
 From maven central
+https://search.maven.org/artifact/ru.objectsfill/objects-fill-processor
+
 ```xml
 <dependency>
   <groupId>ru.objectsfill</groupId>
   <artifactId>objects-fill-processor</artifactId>
-  <version>0.0.2</version>
+  <version>x.x.x</version>
 </dependency>
 ```
 
 ```gradle
-testImplementation 'ru.objectsfill:objects-fill-processor:0.0.2'
-testAnnotationProcessor 'ru.objectsfill:objects-fill-processor:0.0.2'
+testImplementation 'ru.objectsfill:objects-fill-processor:x.x.x'
+testAnnotationProcessor 'ru.objectsfill:objects-fill-processor:x.x.x'
 ```
 4. Read doc 
 
