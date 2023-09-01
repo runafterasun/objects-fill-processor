@@ -35,11 +35,11 @@ public class DefaultBoxTypeContainer implements BoxTypeContainerService {
         container.putIfAbsent(Date.class, new DateFill());
         container.putIfAbsent(String.class, new StringFill());
         container.putIfAbsent(UUID.class, new UUIDFill());
+        container.putIfAbsent(Character.class, new CharacterFill());
         container.putIfAbsent(int.class, new PrimitiveInt());
         container.putIfAbsent(long.class, new PrimitiveLong());
         container.putIfAbsent(double.class, new PrimitiveDouble());
         container.putIfAbsent(boolean.class, new PrimitiveBoolean());
-        container.putIfAbsent(Character.class, new CharacterFill());
         container.putIfAbsent(char.class, new PrimitiveChar());
 
     }
