@@ -62,6 +62,7 @@ public final class RandomValue {
      Fills the given collection with random values.
      @param fill The object containing all the information about the target collection.
      @param <K> The type of stream
+     @return not closed stream
      */
     @SuppressWarnings({"unchecked", "unused"})
     public static <K> Stream<K> fillStream(Fill fill) {

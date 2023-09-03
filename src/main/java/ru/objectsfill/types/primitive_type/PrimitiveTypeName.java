@@ -15,11 +15,17 @@ import static ru.objectsfill.utils.RandomGenerator.randomNum;
  */
 public enum PrimitiveTypeName {
 
+    /**Primitive long for array creation*/
     LONG("long", (fill, field) -> field.set(fill.getObjectz(), createArrayPrimitiveLong(fill))),
+    /**Primitive int for array creation*/
     INT("int", (fill, field) -> field.set(fill.getObjectz(), createArrayPrimitiveInt(fill))),
+    /**Primitive char for array creation*/
     CHAR("char", (fill, field) -> field.set(fill.getObjectz(), createArrayPrimitiveChar(fill))),
+    /**Primitive double for array creation*/
     DOUBLE("double", (fill, field) -> field.set(fill.getObjectz(), createArrayPrimitiveDouble(fill))),
+    /**Primitive byte for array creation*/
     BYTE("byte", (fill, field) -> field.set(fill.getObjectz(), createArrayPrimitiveByte(fill))),
+    /**Primitive boolean for array creation*/
     BOOLEAN("boolean", (fill, field) -> field.set(fill.getObjectz(), createArrayPrimitiveBoolean(fill)));
 
     /**
@@ -32,6 +38,11 @@ public enum PrimitiveTypeName {
      */
     private final BinaryFunction<Fill, Field> createPrimitiveArray;
 
+    /**
+     * constructor for primitive array list
+     * @param typeName name of primitive
+     * @param createPrimitiveArray function for primitive array creation
+     */
     PrimitiveTypeName(String typeName, BinaryFunction<Fill, Field> createPrimitiveArray) {
         this.typeName = typeName;
         this.createPrimitiveArray = createPrimitiveArray;
@@ -39,6 +50,7 @@ public enum PrimitiveTypeName {
 
     /**
      * getType name
+     * @return type name
      */
     public String getTypeName() {
         return typeName;
@@ -46,6 +58,7 @@ public enum PrimitiveTypeName {
 
     /**
      * get the function to create array
+     * @return primitive array function
      */
     public BinaryFunction<Fill, Field> getCreatePrimitiveArray() {
         return createPrimitiveArray;
@@ -55,6 +68,7 @@ public enum PrimitiveTypeName {
      * Find primitive by name
      *
      * @param name the Fill object containing the configuration for generating values
+     * @return primitive type name
      */
     public static PrimitiveTypeName getByName(String name) {
         return Arrays.stream(values())
@@ -67,6 +81,7 @@ public enum PrimitiveTypeName {
      * Fill long primitive array
      *
      * @param fill the Fill object containing the configuration for generating values
+     * @return primitive long array
      */
     private static long[] createArrayPrimitiveLong(Fill fill) {
         long[] genericArray = new long[fill.getCollectionSize()];
@@ -81,6 +96,7 @@ public enum PrimitiveTypeName {
      * Fill int primitive array
      *
      * @param fill the Fill object containing the configuration for generating values
+     * @return primitive int array
      */
     private static int[] createArrayPrimitiveInt(Fill fill) {
         int[] genericArray = new int[fill.getCollectionSize()];
@@ -94,6 +110,7 @@ public enum PrimitiveTypeName {
      * Fill char primitive array
      *
      * @param fill the Fill object containing the configuration for generating values
+     * @return primitive char array
      */
     private static char[] createArrayPrimitiveChar(Fill fill) {
         char[] genericArray = new char[fill.getCollectionSize()];
@@ -107,6 +124,7 @@ public enum PrimitiveTypeName {
      * Fill double primitive array
      *
      * @param fill the Fill object containing the configuration for generating values
+     * @return primitive double array
      */
     private static double[] createArrayPrimitiveDouble(Fill fill) {
         double[] genericArray = new double[fill.getCollectionSize()];
@@ -120,6 +138,7 @@ public enum PrimitiveTypeName {
      * Fill byte primitive array
      *
      * @param fill the Fill object containing the configuration for generating values
+     * @return primitive byte array
      */
     private static byte[] createArrayPrimitiveByte(Fill fill) {
         return RandomUtils.nextBytes(fill.getCollectionSize());
@@ -129,6 +148,7 @@ public enum PrimitiveTypeName {
      * Fill boolean primitive array
      *
      * @param fill the Fill object containing the configuration for generating values
+     * @return primitive boolean array
      */
     private static boolean[] createArrayPrimitiveBoolean(Fill fill) {
         boolean[] genericArray = new boolean[fill.getCollectionSize()];
