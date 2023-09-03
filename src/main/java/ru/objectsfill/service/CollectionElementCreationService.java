@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static ru.objectsfill.utils.FieldUtils.getObjectUnaryOperator;
+
 /**
 
  The CollectionElementCreationService class is responsible for generating collection elements
@@ -66,10 +68,12 @@ public class CollectionElementCreationService {
             return classForCollectionType.get().generate(field, fill);
         }
         if (type.isArray()) {
-            return new FillArray().createArray(type, fill);
+            return new FillArray().createArray(type, fill, field);
         }
-        return new ElementCreationService().generateSingleValue(type, fill);
+
+        return getObjectUnaryOperator(fill, field).apply(new ElementCreationService().generateSingleValue(type, fill));
     }
+
 
 
 

@@ -4,10 +4,7 @@ import ru.objectsfill.annotation_processor.exceptions.FillException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
 
@@ -16,42 +13,46 @@ import java.util.Map;
 public final class Fill {
 
     /**
-
      The object to be filled with random data.
      */
     private Object objectz;
-    /**
 
+    /**
      The class of the object to be created and filled.
      */
     private Class<?> clazz;
-    /**
 
+    /**
      The names of fields excluded from filling.
      */
     private List<String> excludedFieldName;
-    /**
 
+    /**
      The depth limit for traversing dependency trees or preventing cyclic dependencies.
      */
     private Integer deep;
-    /**
 
+    /**
      The number of objects to be created in a collection.
      */
     private Integer collectionSize;
-    /**
 
+    /**
      The length of randomly generated values.
      */
     private Integer valueLength;
-    /**
 
+    /**
      The generic types used in the object.
      */
     private Map<String, Type> genericType;
-    /**
 
+    /**
+     The extended field parameters.
+     */
+    private List<Extend> extendedFieldParams;
+
+    /**
      Constructs a new Fill object.
      @param objectz The object to be filled.
      @param clazz The class of the object.
@@ -62,7 +63,8 @@ public final class Fill {
      @param valueLength The value length.
      */
     private Fill(Object objectz, Class<?> clazz, List<String> excludedFieldName,
-                 Integer deep, Map<String, Type> genericType, Integer collectionSize, Integer valueLength) {
+                 Integer deep, Map<String, Type> genericType, Integer collectionSize,
+                 Integer valueLength, List<Extend> extendedFieldParams) {
         this.objectz = objectz;
         this.clazz = clazz;
         this.excludedFieldName = excludedFieldName;
@@ -70,6 +72,7 @@ public final class Fill {
         this.genericType = genericType;
         this.collectionSize = collectionSize;
         this.valueLength = valueLength;
+        this.extendedFieldParams = extendedFieldParams;
     }
     /**
 
@@ -154,6 +157,15 @@ public final class Fill {
     public Integer getValueLength() {
         return valueLength;
     }
+
+    /**
+
+     Gets the extended field parameters.
+     @return The extended field parameters.
+     */
+    public List<Extend> getExtendedFieldParams() {
+        return extendedFieldParams;
+    }
     /**
 
      Starts building a Fill object with the specified object.
@@ -213,6 +225,12 @@ public final class Fill {
          The generic types used in the object.
          */
         private Map<String, Type> genericType = new HashMap<>();
+
+        /**
+
+         The extended field parameters/
+         */
+        private List<Extend> extendedFieldParams = new ArrayList<>();
         /**
 
          Constructs a new FillBuilder object with the specified object.
@@ -257,6 +275,39 @@ public final class Fill {
             this.valueLength = valueLength;
             return this;
         }
+
+        /**
+
+         Sets the extended field params.
+         @param parameter The field params.
+         @return The FillBuilder instance.
+         */
+        public FillBuilder fieldParams(Extend parameter) {
+            this.extendedFieldParams.add(parameter);
+            return this;
+        }
+
+        /**
+
+         Sets the extended field params.
+         @param parameter The field params.
+         @return The FillBuilder instance.
+         */
+        public FillBuilder fieldParams(Extend... parameter) {
+            this.extendedFieldParams.addAll(Arrays.stream(parameter).toList());
+            return this;
+        }
+
+        /**
+
+         Sets the extended field params list.
+         @param parameter The field params.
+         @return The FillBuilder instance.
+         */
+        public FillBuilder fieldParams(List<Extend> parameter) {
+            this.extendedFieldParams.addAll(parameter);
+            return this;
+        }
         /**
 
          Adds a generic type to the FillBuilder.
@@ -275,7 +326,7 @@ public final class Fill {
          @return The FillBuilder instance.
          */
         public FillBuilder withGeneric(Map<String, Type> genericType) {
-            this.genericType = genericType;
+            this.genericType.putAll(genericType);
             return this;
         }
         /**
@@ -298,7 +349,18 @@ public final class Fill {
          @return The FillBuilder instance.
          */
         public FillBuilder excludeField(List<String> excludedFieldName) {
-            this.excludedFieldName = excludedFieldName;
+            this.excludedFieldName.addAll(excludedFieldName);
+            return this;
+        }
+
+        /**
+         Sets the excluded field names.
+         @param excludedFieldName The excluded field names.
+         @return The FillBuilder instance.
+         */
+        public FillBuilder excludeField(String... excludedFieldName) {
+            List<String> excludedFieldNameList = Arrays.stream(excludedFieldName).toList();
+            this.excludedFieldName.addAll(excludedFieldNameList);
             return this;
         }
         /**
@@ -313,12 +375,11 @@ public final class Fill {
             return this;
         }
         /**
-
          Builds and returns the Fill object.
          @return The created Fill object.
          */
         public Fill gen() {
-            return new Fill(objectz, clazz, excludedFieldName, deep, genericType, collectionSize, valueLength);
+            return new Fill(objectz, clazz, excludedFieldName, deep, genericType, collectionSize, valueLength, extendedFieldParams);
         }
         /**
 

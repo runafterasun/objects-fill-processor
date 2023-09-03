@@ -1,49 +1,66 @@
 package ru.objectsfill.types.primitive_type;
 
+import org.apache.commons.lang3.RandomUtils;
+import ru.objectsfill.functions.BinaryFunction;
 import ru.objectsfill.object_param.Fill;
 import ru.objectsfill.utils.RandomGenerator;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static ru.objectsfill.utils.RandomGenerator.randomNum;
 
 /**
- * Class for generating and filling primitive array values.
+ * enum with primitive types name and function to create array
  */
-public class PrimitiveArrayFill {
+public enum PrimitiveTypeName {
+
+    LONG("long", (fill, field) -> field.set(fill.getObjectz(), createArrayPrimitiveLong(fill))),
+    INT("int", (fill, field) -> field.set(fill.getObjectz(), createArrayPrimitiveInt(fill))),
+    CHAR("char", (fill, field) -> field.set(fill.getObjectz(), createArrayPrimitiveChar(fill))),
+    DOUBLE("double", (fill, field) -> field.set(fill.getObjectz(), createArrayPrimitiveDouble(fill))),
+    BYTE("byte", (fill, field) -> field.set(fill.getObjectz(), createArrayPrimitiveByte(fill))),
+    BOOLEAN("boolean", (fill, field) -> field.set(fill.getObjectz(), createArrayPrimitiveBoolean(fill)));
 
     /**
-     * immutable class
+     * type name
      */
-    private PrimitiveArrayFill(){}
+    private final String typeName;
 
     /**
-     * array with primitive types name
+     * the function to create array
      */
-    public static final List<String> primitiveArrayFieldNames = new ArrayList<>(Arrays.asList("long", "int", "char", "double", "boolean"));
+    private final BinaryFunction<Fill, Field> createPrimitiveArray;
+
+    PrimitiveTypeName(String typeName, BinaryFunction<Fill, Field> createPrimitiveArray) {
+        this.typeName = typeName;
+        this.createPrimitiveArray = createPrimitiveArray;
+    }
 
     /**
-     * Fill field with random array
+     * getType name
+     */
+    public String getTypeName() {
+        return typeName;
+    }
+
+    /**
+     * get the function to create array
+     */
+    public BinaryFunction<Fill, Field> getCreatePrimitiveArray() {
+        return createPrimitiveArray;
+    }
+
+    /**
+     * Find primitive by name
      *
-     * @param fill the Fill object containing the configuration for generating values
-     * @param componentName name of the component
-     * @param field for fill
-     * @throws IllegalAccessException if access to the field is denied
+     * @param name the Fill object containing the configuration for generating values
      */
-    public static void fillPrimitiveArrayField(Fill fill, String componentName, Field field) throws IllegalAccessException {
-        field.setAccessible(true);
-
-        switch (componentName) {
-            case "long" -> field.set(fill.getObjectz(), createArrayPrimitiveLong(fill));
-            case "int" -> field.set(fill.getObjectz(), createArrayPrimitiveInt(fill));
-            case "char" -> field.set(fill.getObjectz(), createArrayPrimitiveChar(fill));
-            case "double" -> field.set(fill.getObjectz(), createArrayPrimitiveDouble(fill));
-            case "boolean" -> field.set(fill.getObjectz(), createArrayPrimitiveBoolean(fill));
-            default -> throw new IllegalStateException("Unsupported primitive type: " + componentName);
-        }
+    public static PrimitiveTypeName getByName(String name) {
+        return Arrays.stream(values())
+                .filter(type -> type.getTypeName().equals(name))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -100,6 +117,15 @@ public class PrimitiveArrayFill {
     }
 
     /**
+     * Fill byte primitive array
+     *
+     * @param fill the Fill object containing the configuration for generating values
+     */
+    private static byte[] createArrayPrimitiveByte(Fill fill) {
+        return RandomUtils.nextBytes(fill.getCollectionSize());
+    }
+
+    /**
      * Fill boolean primitive array
      *
      * @param fill the Fill object containing the configuration for generating values
@@ -111,4 +137,5 @@ public class PrimitiveArrayFill {
         }
         return genericArray;
     }
+
 }

@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'ru.objectsfill'
-version '0.0.3'
+version '0.1.0'
 
 repositories {
     mavenLocal()
@@ -44,7 +44,7 @@ publishing {
             artifact javadocJar
             artifactId = "objects-fill-processor"
             groupId = "ru.objectsfill"
-            version = "0.0.2"
+            version = "0.1.0"
             from(components["java"])
             pom {
                 packaging 'jar'

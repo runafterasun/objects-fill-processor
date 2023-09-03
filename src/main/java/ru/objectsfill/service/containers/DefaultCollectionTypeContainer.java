@@ -1,15 +1,14 @@
 package ru.objectsfill.service.containers;
 
 import ru.objectsfill.service.interfaces.CollectionTypeContainerService;
-import ru.objectsfill.types.collection_type.CollectionTypeFill;
-import ru.objectsfill.types.collection_type.FillListCollection;
-import ru.objectsfill.types.collection_type.FillSetCollection;
-import ru.objectsfill.types.collection_type.MapFill;
+import ru.objectsfill.types.collection_type.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
+
 /**
 
  The DefaultCollectionTypeContainer class implements the CollectionTypeContainerService interface
@@ -30,6 +29,7 @@ public class DefaultCollectionTypeContainer implements CollectionTypeContainerSe
         container.putIfAbsent(List.class, new FillListCollection());
         container.putIfAbsent(Map.class, new MapFill());
         container.putIfAbsent(Set.class, new FillSetCollection());
+        container.putIfAbsent(Stream.class, new FillRawStream());
     }
     /**
 

@@ -1,8 +1,13 @@
 package ru.objectsfill.utils;
 
+import ru.objectsfill.object_param.Extend;
+import ru.objectsfill.object_param.Fill;
+
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.UnaryOperator;
 
 import static org.apache.commons.lang3.ArrayUtils.EMPTY_FIELD_ARRAY;
 /**
@@ -63,6 +68,63 @@ public class FieldUtils {
             }
         }
         return result;
+    }
+
+    /**
+     * get wrap function or default t -> t. If we don't have reference to field
+     *
+     * @param fill the `Fill` object containing the generation parameters
+     * @return function
+     */
+    public static UnaryOperator<Object> getObjectUnaryOperator(Fill fill) {
+        return getObjectUnaryOperator(fill, null);
+    }
+    /**
+     * get wrap function or default t -> t. If we don't have reference to field
+     *
+     * @param fill the `Fill` object containing the generation parameters
+     * @param field The field for which the collection stream is being filled.
+     * @return function
+     */
+    public static UnaryOperator<Object> getObjectUnaryOperator(Fill fill, Field field) {
+        UnaryOperator<Object> mutationFunction = t -> t;
+        if(field == null) {
+            Optional<Extend> extend = getFirstSingleParamFunction(fill);
+            if (extend.isPresent() && extend.get().getFieldName() == null && extend.get().getFieldChangeFunction() != null) {
+                mutationFunction = extend.get().getFieldChangeFunction();
+            }
+        } else {
+            Optional<Extend> extFieldParam = getExtFillParam(field, fill);
+            if (extFieldParam.isPresent() && extFieldParam.get().getFieldChangeFunction() != null) {
+                mutationFunction = extFieldParam.get().getFieldChangeFunction();
+            }
+        }
+        return mutationFunction;
+    }
+
+    /**
+     * Get first of ext parameters
+     *
+     * @param fill      the `Fill` object containing the generation parameters
+     * @return get any of param
+     */
+    private static Optional<Extend> getFirstSingleParamFunction(Fill fill) {
+        return fill.getExtendedFieldParams()
+                .stream()
+                .findFirst();
+    }
+
+    /**
+     *
+     * @param field The field for which the collection stream is being filled.
+     * @param fill The Fill object containing the necessary information for generation.
+     * @return extended parameter for some field
+     */
+    public static Optional<Extend> getExtFillParam(Field field, Fill fill) {
+        return fill.getExtendedFieldParams()
+                .stream()
+                .filter(fillFieldParameter -> fillFieldParameter.getFieldName().equals(field.getName()))
+                .findFirst();
     }
 
 }
