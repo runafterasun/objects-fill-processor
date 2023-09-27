@@ -64,6 +64,7 @@ public class FieldUtils {
      *
      * @param fill special generated object
      * @param constructor get construct for object creation
+     * @param <T> type of object
      * @return T  constructed object
      * @throws IllegalArgumentException    if the class is null
      * @throws IllegalStateException   if the FieldCallback encounters an error while processing a field
@@ -77,6 +78,8 @@ public class FieldUtils {
      *
      * @param fill special generated object
      * @param constructor get construct for object creation
+     * @param <T> type of object
+     * @param tClass class of outer object for creation
      * @return T  constructed object
      * @throws IllegalArgumentException    if the class is null
      * @throws IllegalStateException   if the FieldCallback encounters an error while processing a field

@@ -76,8 +76,8 @@ public final class Fill {
     }
 
     /**
-
      set new object if old object was without simple construct
+     @param objectz new created object.
      */
     public void setObjectz(Object objectz) {
         this.objectz = objectz;
