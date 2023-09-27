@@ -1,6 +1,5 @@
 package ru.objectsfill.service;
 
-import ru.objectsfill.core.RandomValueFieldSetterCallback;
 import ru.objectsfill.object_param.Fill;
 import ru.objectsfill.service.containers.DefaultBoxTypeContainer;
 import ru.objectsfill.service.containers.DefaultObjectTypeContainer;
@@ -10,12 +9,11 @@ import ru.objectsfill.types.box_type.BoxTypeFill;
 import ru.objectsfill.types.object_type.ObjectTypeFill;
 import ru.objectsfill.utils.ScanningForClassUtils;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -223,7 +221,16 @@ public class ElementCreationService {
     @SuppressWarnings("unchecked")
     public static <T> T createInstance(Class<T> vClass, Fill fill) {
         try {
-            T newInstance = vClass.getDeclaredConstructor().newInstance();
+            Optional<Constructor<?>> minConstructSize = Arrays
+                    .stream(vClass.getConstructors())
+                    .min(Comparator.comparingInt(Constructor::getParameterCount));
+
+            T newInstance;
+            if(minConstructSize.isPresent() && minConstructSize.get().getParameters().length > 0) {
+                newInstance = addObjectWithParamConstruct(minConstructSize.get(), fill, vClass);
+            } else {
+                newInstance = vClass.getDeclaredConstructor().newInstance();
+            }
             Integer deep = fill.getDeep();
             if (deep > 0) {
                 Fill fillNextNode = Fill.object(newInstance)
@@ -232,7 +239,8 @@ public class ElementCreationService {
                         .valueLength(fill.getValueLength())
                         .fieldParams(fill.getExtendedFieldParams())
                         .setDeep(--deep)
-                        .withGeneric(fill.getGenericType()).gen();
+                        .withGeneric(fill.getGenericType())
+                        .gen();
                 fill(fillNextNode);
                 return (T) fillNextNode.getObjectz();
             }
@@ -247,6 +255,6 @@ public class ElementCreationService {
      @param fill The Fill object containing the object instance to be filled.
      */
     private static void fill(Fill fill) {
-        doWithFields(fill.getObjectz().getClass(), new RandomValueFieldSetterCallback(fill));
+        doWithFields(fill);
     }
 }

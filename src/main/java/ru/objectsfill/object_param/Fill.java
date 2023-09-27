@@ -74,6 +74,14 @@ public final class Fill {
         this.valueLength = valueLength;
         this.extendedFieldParams = extendedFieldParams;
     }
+
+    /**
+
+     set new object if old object was without simple construct
+     */
+    public void setObjectz(Object objectz) {
+        this.objectz = objectz;
+    }
     /**
 
      Gets the generic types.

@@ -1,11 +1,14 @@
 package ru.objectsfill.utils;
 
+import ru.objectsfill.core.RandomValueFieldSetterCallback;
 import ru.objectsfill.object_param.Extend;
 import ru.objectsfill.object_param.Fill;
+import ru.objectsfill.service.CollectionElementCreationService;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.Map;
-import java.util.Optional;
+import java.lang.reflect.Parameter;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.UnaryOperator;
 
@@ -23,26 +26,78 @@ public class FieldUtils {
     /**
      * Invokes the given FieldCallback for each field in the specified class and its superclasses.
      *
-     * @param clazz the class to process fields for
-     * @param fc    the FieldCallback to invoke for each field
+     * @param fill special generated object
      * @throws IllegalArgumentException    if the class is null
      * @throws IllegalStateException   if the FieldCallback encounters an error while processing a field
      */
-    public static void doWithFields(Class<?> clazz, FieldCallback fc) {
-        Class<?> targetClass = clazz;
-        do {
-            Field[] fields = getDeclaredFields(targetClass);
-            for (Field field : fields) {
-                try {
-                    fc.doWith(field);
+    public static void doWithFields(Fill fill) {
+        RandomValueFieldSetterCallback fc = new RandomValueFieldSetterCallback(fill);
+        if (fill.getObjectz() != null) {
+            Class<?> targetClass = fill.getObjectz().getClass();
+            do {
+                Field[] fields = getDeclaredFields(targetClass);
+                for (Field field : fields) {
+                    try {
+                        fc.doWith(field);
+                    } catch (IllegalAccessException ex) {
+                        throw new IllegalStateException("Not allowed to access field '" + field.getName() + "': " + ex);
+                    }
                 }
-                catch (IllegalAccessException ex) {
-                    throw new IllegalStateException("Not allowed to access field '" + field.getName() + "': " + ex);
+                targetClass = targetClass.getSuperclass();
+            }
+            while (targetClass != null && targetClass != Object.class);
+
+        } else if(fill.getClazz() != null) {
+            Optional<Constructor<?>> minConstructSize = Arrays
+                    .stream(fill.getClazz().getConstructors())
+                    .min(Comparator.comparingInt(Constructor::getParameterCount));
+
+            if(minConstructSize.isPresent()) {
+                fill.setObjectz(addObjectWithParamConstruct(minConstructSize.get(), fill));
+                doWithFields(fill);
+            }
+        }
+    }
+
+    /**
+     * create instance of class with construct parameters
+     *
+     * @param fill special generated object
+     * @param constructor get construct for object creation
+     * @return T  constructed object
+     * @throws IllegalArgumentException    if the class is null
+     * @throws IllegalStateException   if the FieldCallback encounters an error while processing a field
+     */
+    public static <T> T addObjectWithParamConstruct(Constructor<?> constructor, Fill fill) {
+        return addObjectWithParamConstruct(constructor, fill, fill.getClazz());
+    }
+
+    /**
+     * create instance of class with construct parameters
+     *
+     * @param fill special generated object
+     * @param constructor get construct for object creation
+     * @return T  constructed object
+     * @throws IllegalArgumentException    if the class is null
+     * @throws IllegalStateException   if the FieldCallback encounters an error while processing a field
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T addObjectWithParamConstruct(Constructor<?> constructor, Fill fill, Class<?> tClass) {
+        Parameter[] parameters = constructor.getParameters();
+        Field[] fields = getDeclaredFields(tClass);
+        Object[] filledParameters = new Object[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            for (Field field : fields) {
+                if(parameters[i].getName().equals(field.getName())) {
+                    Object value = new CollectionElementCreationService().generateCollection(field, fill);
+                    filledParameters[i] = value;
                 }
             }
-            targetClass = targetClass.getSuperclass();
         }
-        while (targetClass != null && targetClass != Object.class);
+        try {
+            return (T) constructor.newInstance(filledParameters);
+        } catch (Exception ignored) {}
+        return null;
     }
     /**
      * Retrieves the declared fields of the specified class.

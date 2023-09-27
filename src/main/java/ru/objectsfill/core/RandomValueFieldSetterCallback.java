@@ -38,8 +38,8 @@ public record RandomValueFieldSetterCallback(Fill fill) implements FieldCallback
         Boolean checkExName = checkExcludedName.apply(field).apply(fill);
 
         if (!Modifier.isFinal(field.getModifiers()) && Boolean.TRUE.equals(checkExName)) {
-
             Optional<Fill> extendedParameterForField = getExtendedParameterForField(field);
+
             if (extendedParameterForField.isPresent()) {
                 generateExtendedValue(field, extendedParameterForField.get());
 

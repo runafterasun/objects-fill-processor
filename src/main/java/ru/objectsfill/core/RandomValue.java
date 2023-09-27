@@ -31,8 +31,30 @@ public final class RandomValue {
      */
     @SuppressWarnings("unchecked")
     public static <T> T fill(Fill fill) {
-        doWithFields(fill.getObjectz().getClass(), new RandomValueFieldSetterCallback(fill));
+        doWithFields(fill);
         return ((T) fill.getObjectz());
+    }
+
+    /**
+     Fills the given object with random values shorter.
+     @param object The object to create fill.
+     @param <T> The type of the target object.
+     @return The filled object.
+     */
+    public static <T> T fill(Object object) {
+        Fill gen = Fill.object(object).gen();
+       return fill(gen);
+    }
+
+    /**
+     Fills the given object with random values shorter.
+     @param clazz The class to create fill.
+     @param <T> The type of the target object.
+     @return The filled object.
+     */
+    public static <T> T fill(Class<?> clazz) {
+        Fill gen = Fill.object(clazz).gen();
+        return fill(gen);
     }
 
     /**
