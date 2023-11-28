@@ -13,6 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.UnaryOperator;
 
 import static org.apache.commons.lang3.ArrayUtils.EMPTY_FIELD_ARRAY;
+import static ru.objectsfill.core.RandomValueFieldSetterCallback.getExtendPredicate;
+
 /**
  * Utility class for working with fields in Java classes.
  */
@@ -148,7 +150,10 @@ public class FieldUtils {
         UnaryOperator<Object> mutationFunction = t -> t;
         if(field == null) {
             Optional<Extend> extend = getFirstSingleParamFunction(fill);
-            if (extend.isPresent() && extend.get().getFieldName() == null && extend.get().getFieldChangeFunction() != null) {
+            if (extend.isPresent() &&
+                    extend.get().getFieldName() == null &&
+                    extend.get().getFieldChangeFunction() != null &&
+                    extend.get().getClazz() == null) {
                 mutationFunction = extend.get().getFieldChangeFunction();
             }
         } else {
@@ -181,7 +186,7 @@ public class FieldUtils {
     public static Optional<Extend> getExtFillParam(Field field, Fill fill) {
         return fill.getExtendedFieldParams()
                 .stream()
-                .filter(fillFieldParameter -> fillFieldParameter.getFieldName().equals(field.getName()))
+                .filter(getExtendPredicate(field))
                 .findFirst();
     }
 

@@ -8,6 +8,11 @@ import java.util.function.UnaryOperator;
 public class Extend {
 
     /**
+     * class type for extend
+     */
+    private Class<?> clazz;
+
+    /**
      * name of the field
      */
     private String fieldName;
@@ -24,6 +29,14 @@ public class Extend {
      * add to single field generation function
      */
     private UnaryOperator<Object> singleChangeFunction;
+
+    /**
+     Gets class type for extend.
+     @return class type for extend.
+     */
+    public Class<?> getClazz() {
+        return clazz;
+    }
 
     /**
      Gets mutation function.
@@ -70,11 +83,20 @@ public class Extend {
     }
 
     /**
-     start empty builder
+     start builder with name
+     @param clazz set class type
      @return fill field parameter builder.
      */
-    public static FillFieldParametersBuilder wrapByFunction() {
-        return new FillFieldParametersBuilder();
+    public static FillFieldParametersBuilder clazz(Class<?> clazz) {
+        return new FillFieldParametersBuilder(clazz);
+    }
+
+    /**
+     start function builder
+     @return fill field parameter builder.
+     */
+    public static FillFieldParametersBuilder wrapByFunction(UnaryOperator<Object> singleChangeFunction) {
+        return new FillFieldParametersBuilder(singleChangeFunction);
     }
 
     /**
@@ -82,20 +104,27 @@ public class Extend {
      * @param fieldName field name
      * @param collectionSize size
      * @param valueLength length
+     * @param clazz class type for extend
      * @param singleChangeFunction mutation function
      */
     public Extend(String fieldName, Integer collectionSize, Integer valueLength,
-                  UnaryOperator<Object> singleChangeFunction) {
+                  UnaryOperator<Object> singleChangeFunction, Class<?> clazz) {
         this.fieldName = fieldName;
         this.collectionSize = collectionSize;
         this.valueLength = valueLength;
         this.singleChangeFunction = singleChangeFunction;
+        this.clazz = clazz;
     }
 
     /**
      *  builder for extend class
      */
     public static final class FillFieldParametersBuilder {
+
+        /**
+         * class type for extend
+         */
+        private Class<?> clazz;
 
         /**
          * name of the field
@@ -126,10 +155,27 @@ public class Extend {
         }
 
         /**
+         constructor with field class type
+         @param clazz set field class type
+         */
+        public FillFieldParametersBuilder(Class<?> clazz) {
+            this.clazz = clazz;
+        }
+
+        /**
+         constructor with function
+         @param singleChangeFunction with function
+         */
+        public FillFieldParametersBuilder(UnaryOperator<Object> singleChangeFunction) {
+            this.singleChangeFunction = singleChangeFunction;
+        }
+
+        /**
          constructor
          */
         public FillFieldParametersBuilder() {
         }
+
 
         /**
          Sets the collection size.
@@ -166,7 +212,7 @@ public class Extend {
          @return The created FillFieldParameters object.
          */
         public Extend gen() {
-            return new Extend(fieldName, collectionSize, valueLength, singleChangeFunction);
+            return new Extend(fieldName, collectionSize, valueLength, singleChangeFunction, clazz);
         }
     }
 }

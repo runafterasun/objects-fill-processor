@@ -165,7 +165,10 @@ public class ElementCreationService {
      @return An optional containing the value if found, or empty if not found.
      */
     public static <T> Optional<T> findClassInContainer(Class<?> fieldType, Map<Class<?>, T> container) {
-        Optional<Class<?>> clazzVal = container.keySet().stream().filter(types -> types.isAssignableFrom(fieldType)).findFirst();
+        Optional<Class<?>> clazzVal = container.keySet()
+                .stream()
+                .filter(types -> types.isAssignableFrom(fieldType))
+                .findFirst();
         if(container.containsKey(fieldType)) {
             return Optional.ofNullable(container.get(fieldType));
         }

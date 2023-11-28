@@ -1,6 +1,7 @@
 package ru.objectsfill.utils;
 
 import org.reflections.Reflections;
+import ru.objectsfill.annotation_processor.exceptions.FillException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -35,12 +36,12 @@ public class ScanningForClassUtils {
         Set<Class<?>> annotated =
                 reflections.get(SubTypes.of(TypesAnnotated.with(annotationClazz)).asClass());
         return annotated.stream()
-                .map(ss -> {
+                .map(castClass -> {
                     try {
-                        return (K) ss.getConstructor().newInstance();
+                        return (K) castClass.getConstructor().newInstance();
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                              NoSuchMethodException e) {
-                        throw new RuntimeException(e);
+                        throw new FillException(e.getMessage());
                     }
                 })
                 .toList();
@@ -61,12 +62,12 @@ public class ScanningForClassUtils {
                 reflections.get(SubTypes.of(castInterface).asClass());
 
         return subTypes.stream()
-                .map(ss -> {
+                .map(castClass -> {
                     try {
-                        return (T) ss.getConstructor().newInstance();
+                        return (T) castClass.getConstructor().newInstance();
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                              NoSuchMethodException e) {
-                        throw new RuntimeException(e);
+                        throw new FillException(e.getMessage());
                     }
                 })
                 .toList();

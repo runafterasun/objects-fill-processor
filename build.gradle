@@ -36,6 +36,19 @@ tasks.register('javadocJar', Jar) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            groupId = 'ru.objectsfill'
+//            artifactId = 'objects-fill-processor'
+//            version = "0.1.2"
+//            from components.java
+//        }
+//    }
+//    repositories {
+//        mavenLocal()
+//    }
+//}
 
 publishing {
     publications {
@@ -44,7 +57,7 @@ publishing {
             artifact javadocJar
             artifactId = "objects-fill-processor"
             groupId = "ru.objectsfill"
-            version = "0.1.1"
+            version = "0.1.2"
             from(components["java"])
             pom {
                 packaging 'jar'

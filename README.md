@@ -16,7 +16,6 @@ From maven central <br>
 testImplementation 'ru.objectsfill:objects-fill-processor:x.x.x'
 testAnnotationProcessor 'ru.objectsfill:objects-fill-processor:x.x.x'
 ```
-4. Read doc
 ________________________________________________________________________
 This project can help with generation some random information to object.
 
@@ -135,8 +134,7 @@ public void TestNext() {
                             .valueLength(10)// change size of field
                         .gen(),// construct object
                         Extend
-                            .wrapByFunction()
-                            .addMutationFunction(t -> "You Can do this")
+                            .wrapByFunction(t -> "You Can do this")
                         .gen()) // construct object
                 .withGeneric("T", String.class) // if object with generic
                 .collectionSize(10)// change global size for collections, stream, arrays
@@ -246,8 +244,7 @@ CollectionType collectionType = RandomValue.fill(Fill.object(CollectionType.clas
 ```java
 Stream<String> collectionType = RandomValue.fillStream(Fill.object(String.class)
                 .fieldParams(
-                        Extend.wrapByFunction()
-                                .addMutationFunction(t -> "You Can do this")
+                        Extend.wrapByFunction(t -> "You Can do this")
                                 .gen())
                 .gen());
 ```
@@ -265,8 +262,7 @@ Stream<String> collectionType = RandomValue.fillStream(Fill.object(String.class)
                       .valueLength(10)// change size of field
                       .gen(),// construct object
                 Extend
-                      .wrapByFunction() //change behavior for all
-                      .addMutationFunction(t -> "You Can do this")
+                      .wrapByFunction(t -> "You Can do this") //change behavior for all
                       .gen())
    .gen()
 ```

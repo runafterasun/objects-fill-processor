@@ -1,5 +1,6 @@
 package ru.objectsfill.core;
 
+import ru.objectsfill.object_param.Extend;
 import ru.objectsfill.object_param.Fill;
 import ru.objectsfill.service.CollectionElementCreationService;
 import ru.objectsfill.types.primitive_type.PrimitiveTypeName;
@@ -9,6 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static ru.objectsfill.service.CollectionElementCreationService.getTypeClass;
 import static ru.objectsfill.types.primitive_type.PrimitiveTypeName.*;
@@ -99,7 +101,7 @@ public record RandomValueFieldSetterCallback(Fill fill) implements FieldCallback
 
         return fill.getExtendedFieldParams()
                 .stream()
-                .filter(fillFieldParameter -> fillFieldParameter.getFieldName().equals(field.getName()))
+                .filter(getExtendPredicate(field))
                 .map(extendedFieldParameter -> Fill.object(fill.getObjectz())
                         .excludeField(fill.getExcludedField())
                         .fieldParams(fill.getExtendedFieldParams())
@@ -111,4 +113,21 @@ public record RandomValueFieldSetterCallback(Fill fill) implements FieldCallback
                 )
                 .findFirst();
     }
+
+    /**
+     * get fields by class or name
+     *
+     * @param field The field to process.
+     */
+    public static Predicate<Extend> getExtendPredicate(Field field) {
+        return fillFieldParameter -> {
+            if(fillFieldParameter.getFieldName() != null) {
+                return fillFieldParameter.getFieldName().equals(field.getName());
+            } else {
+                return field.getType().isAssignableFrom(fillFieldParameter.getClazz());
+            }
+        };
+    }
+
+
 }
