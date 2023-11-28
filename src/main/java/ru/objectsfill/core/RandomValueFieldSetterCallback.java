@@ -118,6 +118,7 @@ public record RandomValueFieldSetterCallback(Fill fill) implements FieldCallback
      * get fields by class or name
      *
      * @param field The field to process.
+     * @return get fields by class or name
      */
     public static Predicate<Extend> getExtendPredicate(Field field) {
         return fillFieldParameter -> {
