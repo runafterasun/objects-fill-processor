@@ -146,10 +146,10 @@ public void TestNext() {
 * For filling some object or class you can use Fill builder
 ```java
 //For class
-TestBoxClass testBoxClass = RandomValue.fill(Fill.object(TestBoxClass.class).gen());
+TestBoxClass testBoxClass = RandomValue.fill(TestBoxClass.class);
 
 //For object
-TestBoxClass testBoxClass = RandomValue.fill(Fill.object(new TestBoxClass()).gen());
+TestBoxClass testBoxClass = RandomValue.fill(new TestBoxClass());
 ```
 * Set deep for filling object. Default value equals three.
 ```java
