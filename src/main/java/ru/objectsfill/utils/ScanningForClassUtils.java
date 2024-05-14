@@ -1,15 +1,16 @@
 package ru.objectsfill.utils;
 
-import org.reflections.Reflections;
 import ru.objectsfill.annotation_processor.exceptions.FillException;
+import ru.objectsfill.utils.reflection.Reflections;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
 
-import static org.reflections.scanners.Scanners.SubTypes;
-import static org.reflections.scanners.Scanners.TypesAnnotated;
+import static ru.objectsfill.utils.reflection.scanners.Scanners.SubTypes;
+import static ru.objectsfill.utils.reflection.scanners.Scanners.TypesAnnotated;
+
 /**
  * Utility class for scanning classes and retrieving annotated instances or implementations of interfaces.
  */
