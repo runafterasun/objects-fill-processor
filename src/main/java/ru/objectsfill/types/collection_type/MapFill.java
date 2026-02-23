@@ -10,7 +10,8 @@ import java.util.Map;
 
 
 /**
- * class MapFill
+ * Generates a {@link java.util.HashMap} with randomly generated key-value pairs.
+ * Extracts key and value types from the field's generic type parameters.
  */
 public class MapFill implements CollectionTypeFill {
 

@@ -5,7 +5,8 @@ import ru.objectsfill.object_param.Fill;
 import java.util.stream.Stream;
 
 /**
- * interface ObjectCollectionFillExtension
+ * Extension interface providing stream-based generation for complex object types.
+ * Implemented by {@link ru.objectsfill.types.object_type.ObjectTypeFill}.
  */
 public interface ObjectCollectionFillExtension {
 

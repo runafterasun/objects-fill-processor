@@ -6,17 +6,16 @@ import java.lang.reflect.Field;
 
 
 /**
- * class FillRawStream
+ * Generates a raw {@link java.util.stream.Stream} of elements without collecting into a concrete collection.
  */
 public class FillRawStream implements CollectionTypeFill {
 
     /**
-     * Generates a set collection based on the provided field and fill parameters.
-     * The generated collection will be in the form of a raw stream object.
+     * Returns a stream of randomly generated elements for the given field.
      *
-     * @param field the field for which the set collection is generated
-     * @param fill  the `Fill` object containing the generation parameters
-     * @return the generated set collection
+     * @param field the field for which the stream is generated
+     * @param fill  the generation parameters
+     * @return a stream of generated elements
      */
     @Override
     public Object generate(Field field, Fill fill) {

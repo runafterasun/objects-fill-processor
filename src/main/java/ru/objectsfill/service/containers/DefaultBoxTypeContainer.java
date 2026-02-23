@@ -11,19 +11,15 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
-
- The DefaultBoxTypeContainer class implements the BoxTypeContainerService interface
-
- and provides a default implementation of the container for BoxTypeFill instances.
-
- It contains mappings between Class objects and their respective BoxTypeFill implementations.
+ * Default registry of {@link BoxTypeFill} implementations for all built-in types:
+ * primitives, wrappers, String, UUID, BigDecimal, and Date.
  */
 public class DefaultBoxTypeContainer implements BoxTypeContainerService {
 
     private final Map<Class<?>, BoxTypeFill> container;
-    /**
 
-     Constructs a new DefaultBoxTypeContainer and initializes the container with default mappings.
+    /**
+     * Constructs the container and registers all built-in type handlers.
      */
     public DefaultBoxTypeContainer() {
         container = new HashMap<>();
@@ -41,12 +37,10 @@ public class DefaultBoxTypeContainer implements BoxTypeContainerService {
         container.putIfAbsent(double.class, new PrimitiveDouble());
         container.putIfAbsent(boolean.class, new PrimitiveBoolean());
         container.putIfAbsent(char.class, new PrimitiveChar());
-
     }
-    /**
 
-     Returns the container that holds the mappings between Class objects and BoxTypeFill implementations.
-     @return The container.
+    /**
+     * {@inheritDoc}
      */
     public Map<Class<?>, BoxTypeFill>  getContainer() {
         return container;

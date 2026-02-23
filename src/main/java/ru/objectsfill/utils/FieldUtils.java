@@ -16,7 +16,8 @@ import static org.apache.commons.lang3.ArrayUtils.EMPTY_FIELD_ARRAY;
 import static ru.objectsfill.core.RandomValueFieldSetterCallback.getExtendPredicate;
 
 /**
- * Utility class for working with fields in Java classes.
+ * Utility class for reflective field traversal and population.
+ * Provides caching of declared fields and resolution of per-field mutation functions.
  */
 public class FieldUtils {
 
@@ -25,12 +26,16 @@ public class FieldUtils {
     }
 
     private static final Map<Class<?>, Field[]> declaredFieldsCache = new ConcurrentHashMap<>(256);
+
     /**
-     * Invokes the given FieldCallback for each field in the specified class and its superclasses.
+     * Iterates over all declared fields of the target object (including superclass fields)
+     * and populates each one using {@link RandomValueFieldSetterCallback}.
+     * If the object is {@code null} but the class is set, attempts to create an instance
+     * via the constructor with the fewest parameters.
      *
-     * @param fill special generated object
-     * @throws IllegalArgumentException    if the class is null
-     * @throws IllegalStateException   if the FieldCallback encounters an error while processing a field
+     * @param fill the Fill configuration containing the target object and generation parameters
+     * @throws IllegalArgumentException if the class is null
+     * @throws IllegalStateException    if a field cannot be accessed
      */
     public static void doWithFields(Fill fill) {
         RandomValueFieldSetterCallback fc = new RandomValueFieldSetterCallback(fill);
@@ -62,29 +67,28 @@ public class FieldUtils {
     }
 
     /**
-     * create instance of class with construct parameters
+     * Creates an instance of the Fill's target class using the given constructor,
+     * populating constructor parameters with generated values matched by parameter name.
      *
-     * @param fill special generated object
-     * @param constructor get construct for object creation
-     * @param <T> type of object
-     * @return T  constructed object
-     * @throws IllegalArgumentException    if the class is null
-     * @throws IllegalStateException   if the FieldCallback encounters an error while processing a field
+     * @param constructor the constructor to invoke
+     * @param fill        the generation parameters
+     * @param <T>         the type of the created instance
+     * @return the created instance, or {@code null} if instantiation fails
      */
     public static <T> T addObjectWithParamConstruct(Constructor<?> constructor, Fill fill) {
         return addObjectWithParamConstruct(constructor, fill, fill.getClazz());
     }
 
     /**
-     * create instance of class with construct parameters
+     * Creates an instance of the specified class using the given constructor,
+     * populating constructor parameters with generated values matched by parameter name
+     * against the class's declared fields.
      *
-     * @param fill special generated object
-     * @param constructor get construct for object creation
-     * @param <T> type of object
-     * @param tClass class of outer object for creation
-     * @return T  constructed object
-     * @throws IllegalArgumentException    if the class is null
-     * @throws IllegalStateException   if the FieldCallback encounters an error while processing a field
+     * @param constructor the constructor to invoke
+     * @param fill        the generation parameters
+     * @param tClass      the class whose fields are matched to constructor parameters
+     * @param <T>         the type of the created instance
+     * @return the created instance, or {@code null} if instantiation fails
      */
     @SuppressWarnings("unchecked")
     public static <T> T addObjectWithParamConstruct(Constructor<?> constructor, Fill fill, Class<?> tClass) {
@@ -104,14 +108,14 @@ public class FieldUtils {
         } catch (Exception ignored) {}
         return null;
     }
+
     /**
-     * Retrieves the declared fields of the specified class.
-     * The fields are cached in the declaredFieldsCache map for performance optimization.
+     * Returns the declared fields for the given class, using a cache for performance.
      *
-     * @param clazz the class to retrieve declared fields from
-     * @return an array of Field objects representing the declared fields of the class
+     * @param clazz the class to introspect
+     * @return an array of declared fields
      * @throws IllegalArgumentException if the class is null
-     * @throws IllegalStateException    if an error occurs while introspecting the class
+     * @throws IllegalStateException    if class introspection fails
      */
     private static Field[] getDeclaredFields(Class<?> clazz) {
         if (clazz == null)
@@ -131,20 +135,25 @@ public class FieldUtils {
     }
 
     /**
-     * get wrap function or default t -> t. If we don't have reference to field
+     * Resolves the mutation function for the Fill configuration.
+     * Delegates to {@link #getObjectUnaryOperator(Fill, Field)} with a {@code null} field.
      *
-     * @param fill the `Fill` object containing the generation parameters
-     * @return function
+     * @param fill the Fill configuration
+     * @return the mutation function, or identity if none is configured
      */
     public static UnaryOperator<Object> getObjectUnaryOperator(Fill fill) {
         return getObjectUnaryOperator(fill, null);
     }
+
     /**
-     * get wrap function or default t -> t. If we don't have reference to field
+     * Resolves the mutation function for a specific field.
+     * If the field is {@code null}, returns the first global {@link Extend} function
+     * (one with no field name and no class). Otherwise, returns the function
+     * from the matching {@link Extend} parameter for the given field.
      *
-     * @param fill the `Fill` object containing the generation parameters
-     * @param field The field for which the collection stream is being filled.
-     * @return function
+     * @param fill  the Fill configuration
+     * @param field the target field, or {@code null} for global resolution
+     * @return the mutation function, or identity ({@code t -> t}) if none is configured
      */
     public static UnaryOperator<Object> getObjectUnaryOperator(Fill fill, Field field) {
         UnaryOperator<Object> mutationFunction = t -> t;
@@ -166,10 +175,10 @@ public class FieldUtils {
     }
 
     /**
-     * Get first of ext parameters
+     * Returns the first {@link Extend} parameter from the Fill's extended parameter list.
      *
-     * @param fill      the `Fill` object containing the generation parameters
-     * @return get any of param
+     * @param fill the Fill configuration
+     * @return the first Extend parameter, or empty if none exist
      */
     private static Optional<Extend> getFirstSingleParamFunction(Fill fill) {
         return fill.getExtendedFieldParams()
@@ -178,10 +187,12 @@ public class FieldUtils {
     }
 
     /**
+     * Finds the {@link Extend} parameter that matches the given field
+     * by name or class type using {@link RandomValueFieldSetterCallback#getExtendPredicate}.
      *
-     * @param field The field for which the collection stream is being filled.
-     * @param fill The Fill object containing the necessary information for generation.
-     * @return extended parameter for some field
+     * @param field the field to match against
+     * @param fill  the Fill configuration containing extended parameters
+     * @return the matching Extend, or empty if no match
      */
     public static Optional<Extend> getExtFillParam(Field field, Fill fill) {
         return fill.getExtendedFieldParams()

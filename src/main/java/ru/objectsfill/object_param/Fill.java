@@ -7,60 +7,56 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
-
- The Fill class is used to provide information for populating POJO (Plain Old Java Object) classes with random data.
+ * Configuration object that holds all parameters for populating a POJO with random data.
+ * Use the {@link FillBuilder} (via {@link #object(Class)} or {@link #object(Object)}) to construct instances.
+ *
+ * <p>Example:
+ * <pre>{@code
+ * Fill fill = Fill.object(MyClass.class)
+ *     .collectionSize(10)
+ *     .valueLength(15)
+ *     .setDeep(5)
+ *     .excludeField("id", "createdAt")
+ *     .gen();
+ * }</pre>
  */
 public final class Fill {
 
-    /**
-     The object to be filled with random data.
-     */
+    /** The object instance to be filled with random data. */
     private Object objectz;
 
-    /**
-     The class of the object to be created and filled.
-     */
+    /** The class of the object to be created and filled. */
     private Class<?> clazz;
 
-    /**
-     The names of fields excluded from filling.
-     */
+    /** Field names excluded from random value generation. */
     private List<String> excludedFieldName;
 
-    /**
-     The depth limit for traversing dependency trees or preventing cyclic dependencies.
-     */
+    /** Maximum recursion depth for nested object generation. */
     private Integer deep;
 
-    /**
-     The number of objects to be created in a collection.
-     */
+    /** Number of elements to generate for collections and arrays. */
     private Integer collectionSize;
 
-    /**
-     The length of randomly generated values.
-     */
+    /** Length of randomly generated string values. */
     private Integer valueLength;
 
-    /**
-     The generic types used in the object.
-     */
+    /** Mapping of generic type parameter names to their resolved types. */
     private Map<String, Type> genericType;
 
-    /**
-     The extended field parameters.
-     */
+    /** Per-field generation overrides (custom sizes, mutation functions, etc.). */
     private List<Extend> extendedFieldParams;
 
     /**
-     Constructs a new Fill object.
-     @param objectz The object to be filled.
-     @param clazz The class of the object.
-     @param excludedFieldName The names of excluded fields.
-     @param deep The depth limit.
-     @param genericType The generic types.
-     @param collectionSize The collection size.
-     @param valueLength The value length.
+     * Constructs a new Fill configuration.
+     *
+     * @param objectz           the object instance to fill
+     * @param clazz             the class of the object
+     * @param excludedFieldName field names to exclude from generation
+     * @param deep              maximum recursion depth
+     * @param genericType       generic type parameter mappings
+     * @param collectionSize    number of elements for collections
+     * @param valueLength       length of generated string values
+     * @param extendedFieldParams per-field parameter overrides
      */
     private Fill(Object objectz, Class<?> clazz, List<String> excludedFieldName,
                  Integer deep, Map<String, Type> genericType, Integer collectionSize,
@@ -76,183 +72,169 @@ public final class Fill {
     }
 
     /**
-     set new object if old object was without simple construct
-     @param objectz new created object.
+     * Replaces the target object instance. Used when the original class could not be instantiated
+     * via a no-arg constructor and a parameterized constructor was used instead.
+     *
+     * @param objectz the new object instance
      */
     public void setObjectz(Object objectz) {
         this.objectz = objectz;
     }
-    /**
 
-     Gets the generic types.
-     @return The generic types.
+    /**
+     * Returns the generic type parameter mappings.
+     *
+     * @return map of generic type names to their resolved {@link Type} instances
      */
     public Map<String, Type> getGenericType() {
         return genericType;
     }
-    /**
 
-     Sets the depth limit.
-     @param deep The depth limit.
+    /**
+     * Sets the maximum recursion depth for nested object generation.
+     *
+     * @param deep the depth limit
      */
     public void setDeep(Integer deep) {
         this.deep = deep;
     }
-    /**
 
-     Sets the generic types.
-     @param genericType The generic types.
+    /**
+     * Replaces all generic type parameter mappings.
+     *
+     * @param genericType the new generic type map
      */
     public void setGenericType(Map<String, Type> genericType) {
         this.genericType = genericType;
     }
-    /**
 
-     Sets a specific generic type.
-     @param genericName The name of the generic type.
-     @param genericType The specific generic type.
+    /**
+     * Adds a single generic type parameter mapping. Creates the map if it does not yet exist.
+     *
+     * @param genericName the type parameter name (e.g. "T")
+     * @param genericType the resolved type
      */
     public void setGenericType(String genericName, Type genericType) {
         if (this.genericType == null)
             this.genericType = new HashMap<>();
         this.genericType.putIfAbsent(genericName, genericType);
     }
-    /**
 
-     Gets the class of the object.
-     @return The class of the object.
+    /**
+     * Returns the class of the object being filled.
+     *
+     * @return the target class
      */
     public Class<?> getClazz() {
         return clazz;
     }
-    /**
 
-     Gets the object to be filled.
-     @return The object to be filled.
+    /**
+     * Returns the object instance being filled.
+     *
+     * @return the target object
      */
     public Object getObjectz() {
         return objectz;
     }
-    /**
 
-     Gets the names of excluded fields.
-     @return The names of excluded fields.
+    /**
+     * Returns the list of field names excluded from generation.
+     *
+     * @return excluded field names
      */
     public List<String> getExcludedField() {
         return excludedFieldName;
     }
-    /**
 
-     Gets the depth limit.
-     @return The depth limit.
+    /**
+     * Returns the maximum recursion depth.
+     *
+     * @return the depth limit
      */
     public Integer getDeep() {
         return deep;
     }
-    /**
 
-     Gets the collection size.
-     @return The collection size.
+    /**
+     * Returns the number of elements to generate for collections.
+     *
+     * @return the collection size
      */
     public Integer getCollectionSize() {
         return collectionSize;
     }
-    /**
 
-     Gets the value length.
-     @return The value length.
+    /**
+     * Returns the length of randomly generated string values.
+     *
+     * @return the value length
      */
     public Integer getValueLength() {
         return valueLength;
     }
 
     /**
-
-     Gets the extended field parameters.
-     @return The extended field parameters.
+     * Returns the list of per-field parameter overrides.
+     *
+     * @return the extended field parameters
      */
     public List<Extend> getExtendedFieldParams() {
         return extendedFieldParams;
     }
-    /**
 
-     Starts building a Fill object with the specified object.
-     @param object The object to be filled.
-     @return A FillBuilder instance.
+    /**
+     * Starts building a {@link Fill} configuration for an existing object instance.
+     *
+     * @param object the object to fill
+     * @return a new {@link FillBuilder}
      */
     public static FillBuilder object(Object object) {
         return new FillBuilder(object);
     }
-    /**
 
-     Starts building a Fill object with the specified class.
-     @param clazz The class to be created and filled.
-     @return A FillBuilder instance.
+    /**
+     * Starts building a {@link Fill} configuration for a class.
+     * The class will be instantiated automatically via its no-arg constructor.
+     *
+     * @param clazz the class to instantiate and fill
+     * @return a new {@link FillBuilder}
      */
     public static FillBuilder object(Class<?> clazz) {
         return new FillBuilder(clazz);
     }
-    /**
 
-     The FillBuilder class provides a fluent interface for building a Fill object.
+    /**
+     * Fluent builder for constructing {@link Fill} configurations.
      */
     public static final class FillBuilder {
 
-        /**
-
-         The object to be filled.
-         */
         private Object objectz;
-        /**
-
-         The class to be created and filled.
-         */
         private Class<?> clazz;
-        /**
-
-         The names of excluded fields.
-         */
         private List<String> excludedFieldName = new ArrayList<>();
-        /**
-
-         The depth limit for traversing dependency trees.
-         */
         private Integer deep = 3;
-        /**
-
-         The number of objects to be created in a collection.
-         */
         private Integer collectionSize = 5;
-        /**
-
-         The length of randomly generated values.
-         */
         private Integer valueLength = 5;
-        /**
-
-         The generic types used in the object.
-         */
         private Map<String, Type> genericType = new HashMap<>();
-
-        /**
-
-         The extended field parameters/
-         */
         private List<Extend> extendedFieldParams = new ArrayList<>();
-        /**
 
-         Constructs a new FillBuilder object with the specified object.
-         @param objectz The object to be filled.
-         @param <T> The class to be created and filled.
+        /**
+         * Creates a builder from an existing object instance.
+         *
+         * @param objectz the object to fill
+         * @param <T>     the object type
          */
         public <T> FillBuilder(T objectz) {
             this.objectz = objectz;
             this.clazz = objectz.getClass();
         }
-        /**
 
-         Constructs a new FillBuilder object with the specified class.
-         @param clazz The class to be created and filled.
+        /**
+         * Creates a builder from a class, attempting to instantiate it via the no-arg constructor.
+         * If instantiation fails (no public no-arg constructor, abstract class, etc.),
+         * the object will be created later via a parameterized constructor.
+         *
+         * @param clazz the class to instantiate and fill
          */
         public FillBuilder(Class<?> clazz) {
             try {
@@ -261,21 +243,26 @@ public final class Fill {
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ignore) {
             }
         }
-        /**
 
-         Sets the collection size.
-         @param collectionSize The collection size.
-         @return The FillBuilder instance.
+        /**
+         * Sets the number of elements to generate for collections and arrays.
+         *
+         * @param collectionSize the collection size (must be &gt;= 1)
+         * @return this builder
+         * @throws FillException if the value is less than 1
          */
         public FillBuilder collectionSize(Integer collectionSize) {
             checkPositive(collectionSize);
             this.collectionSize = collectionSize;
             return this;
         }
+
         /**
-         Sets the value length.
-         @param valueLength The value length.
-         @return The FillBuilder instance.
+         * Sets the length of randomly generated string values.
+         *
+         * @param valueLength the value length (must be &gt;= 1)
+         * @return this builder
+         * @throws FillException if the value is less than 1
          */
         public FillBuilder valueLength(Integer valueLength) {
             checkPositive(valueLength);
@@ -284,10 +271,10 @@ public final class Fill {
         }
 
         /**
-
-         Sets the extended field params.
-         @param parameter The field params.
-         @return The FillBuilder instance.
+         * Adds a single per-field parameter override.
+         *
+         * @param parameter the field parameter override
+         * @return this builder
          */
         public FillBuilder fieldParams(Extend parameter) {
             this.extendedFieldParams.add(parameter);
@@ -295,10 +282,10 @@ public final class Fill {
         }
 
         /**
-
-         Sets the extended field params.
-         @param parameter The field params.
-         @return The FillBuilder instance.
+         * Adds multiple per-field parameter overrides.
+         *
+         * @param parameter the field parameter overrides
+         * @return this builder
          */
         public FillBuilder fieldParams(Extend... parameter) {
             this.extendedFieldParams.addAll(Arrays.stream(parameter).toList());
@@ -306,42 +293,45 @@ public final class Fill {
         }
 
         /**
-
-         Sets the extended field params list.
-         @param parameter The field params.
-         @return The FillBuilder instance.
+         * Adds a list of per-field parameter overrides.
+         *
+         * @param parameter the field parameter overrides
+         * @return this builder
          */
         public FillBuilder fieldParams(List<Extend> parameter) {
             this.extendedFieldParams.addAll(parameter);
             return this;
         }
-        /**
 
-         Adds a generic type to the FillBuilder.
-         @param genericName The name of the generic type.
-         @param genericType The generic type.
-         @return The FillBuilder instance.
+        /**
+         * Registers a generic type parameter mapping by name.
+         *
+         * @param genericName the type parameter name (e.g. "T")
+         * @param genericType the resolved type
+         * @return this builder
          */
         public FillBuilder withGeneric(String genericName, Type genericType) {
             this.genericType.putIfAbsent(genericName, genericType);
             return this;
         }
-        /**
 
-         Sets multiple generic types in the FillBuilder.
-         @param genericType The map of generic types.
-         @return The FillBuilder instance.
+        /**
+         * Registers multiple generic type parameter mappings.
+         *
+         * @param genericType map of type parameter names to resolved types
+         * @return this builder
          */
         public FillBuilder withGeneric(Map<String, Type> genericType) {
             this.genericType.putAll(genericType);
             return this;
         }
-        /**
 
-         Adds a generic type to the FillBuilder using a Class object.
-         @param genericName The name of the generic type.
-         @param genericClass The generic class.
-         @return The FillBuilder instance.
+        /**
+         * Registers a generic type parameter mapping by name using a {@link Class}.
+         *
+         * @param genericName  the type parameter name (e.g. "T")
+         * @param genericClass the resolved class (ignored if null)
+         * @return this builder
          */
         public FillBuilder withGeneric(String genericName, Class<?> genericClass) {
             if (genericClass != null) {
@@ -349,11 +339,12 @@ public final class Fill {
             }
             return this;
         }
-        /**
 
-         Sets the excluded field names.
-         @param excludedFieldName The excluded field names.
-         @return The FillBuilder instance.
+        /**
+         * Sets the list of field names to exclude from generation.
+         *
+         * @param excludedFieldName the field names to exclude
+         * @return this builder
          */
         public FillBuilder excludeField(List<String> excludedFieldName) {
             this.excludedFieldName.addAll(excludedFieldName);
@@ -361,38 +352,44 @@ public final class Fill {
         }
 
         /**
-         Sets the excluded field names.
-         @param excludedFieldName The excluded field names.
-         @return The FillBuilder instance.
+         * Sets the field names to exclude from generation.
+         *
+         * @param excludedFieldName the field names to exclude
+         * @return this builder
          */
         public FillBuilder excludeField(String... excludedFieldName) {
             List<String> excludedFieldNameList = Arrays.stream(excludedFieldName).toList();
             this.excludedFieldName.addAll(excludedFieldNameList);
             return this;
         }
-        /**
 
-         Sets the depth limit.
-         @param deep The depth limit.
-         @return The FillBuilder instance.
+        /**
+         * Sets the maximum recursion depth for nested object generation.
+         *
+         * @param deep the depth limit (must be &gt;= 1)
+         * @return this builder
+         * @throws FillException if the value is less than 1
          */
         public FillBuilder setDeep(Integer deep) {
             checkPositive(deep);
             this.deep = deep;
             return this;
         }
+
         /**
-         Builds and returns the Fill object.
-         @return The created Fill object.
+         * Builds and returns the {@link Fill} configuration.
+         *
+         * @return the constructed Fill object
          */
         public Fill gen() {
             return new Fill(objectz, clazz, excludedFieldName, deep, genericType, collectionSize, valueLength, extendedFieldParams);
         }
-        /**
 
-         Checks if a number is positive.
-         @param num The number to check.
-         @throws FillException if the number is not positive.
+        /**
+         * Validates that the given number is positive.
+         *
+         * @param num the number to check
+         * @throws FillException if the number is less than 1
          */
         private void checkPositive(Integer num) {
             if (num < 1) {

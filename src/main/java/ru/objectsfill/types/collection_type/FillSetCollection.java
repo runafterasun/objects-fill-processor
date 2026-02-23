@@ -6,7 +6,8 @@ import java.lang.reflect.Field;
 import java.util.stream.Collectors;
 
 /**
- * class FillSetCollection
+ * Generates a {@link java.util.Set} by collecting elements from a stream produced by
+ * {@link CollectionTypeFill#fillCollectionStream}.
  */
 public class FillSetCollection implements CollectionTypeFill {
 

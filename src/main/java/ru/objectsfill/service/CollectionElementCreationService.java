@@ -19,37 +19,30 @@ import java.util.Optional;
 import static ru.objectsfill.utils.FieldUtils.getObjectUnaryOperator;
 
 /**
-
- The CollectionElementCreationService class is responsible for generating collection elements
-
- based on the field type and the Fill object provided.
-
- It utilizes a container that holds mappings between collection types and their respective CollectionTypeFill implementations.
+ * Service responsible for generating collection, array, and single-value field contents.
+ * Resolves the field's element type, looks up the appropriate {@link CollectionTypeFill} handler,
+ * and delegates generation. Falls back to array handling or single-value generation
+ * if no collection handler matches.
  */
 public class CollectionElementCreationService {
     private final Map<Class<?>, CollectionTypeFill> containerCollectionType = new HashMap<>();
-    /**
 
-     Constructs a new CollectionElementCreationService and initializes the container
-     by searching for local container implementations and adding default mappings.
+    /**
+     * Constructs a new service instance and initializes the collection type registry
+     * by scanning for user-defined implementations and adding default mappings.
      */
     public CollectionElementCreationService() {
         findLocalContainerForCollectionType();
         new DefaultCollectionTypeContainer().getContainer().forEach(containerCollectionType::putIfAbsent);
     }
+
     /**
-
-     Generates a collection based on the provided field and Fill object.
-
-     Determines the element type of the collection, retrieves the appropriate CollectionTypeFill implementation,
-
-     and delegates the generation to that implementation.
-
-     @param field The field for which the collection is being generated.
-
-     @param fill The Fill object containing the necessary information for generation.
-
-     @return The generated collection.
+     * Generates a value for the given field based on its type.
+     * Handles parameterized collections (List, Set, Map, Stream), arrays, and plain single values.
+     *
+     * @param field the field to generate a value for
+     * @param fill  the generation parameters
+     * @return the generated collection, array, or single value
      */
     public Object generateCollection(Field field, Fill fill) {
 
@@ -78,14 +71,13 @@ public class CollectionElementCreationService {
 
 
     /**
-
-     Retrieves the class of the field's type, taking into account generic types defined in Fill object.
-
-     @param field The field for which the type class is being retrieved.
-
-     @param fill The Fill object containing the generic type information.
-
-     @return The class representing the field's type.
+     * Resolves the runtime class for a field's type, substituting generic type parameters
+     * from the {@link Fill} configuration when the declared type is {@code Object}.
+     *
+     * @param field the field whose type is being resolved
+     * @param fill  the Fill object containing generic type mappings
+     * @return the resolved class
+     * @throws FillException if a required generic type mapping is not found
      */
     public static Class<?> getTypeClass(Field field, Fill fill) {
         Class<?> type = field.getType();
@@ -100,9 +92,8 @@ public class CollectionElementCreationService {
     }
 
     /**
-
-     Scans the local container implementations for CollectionTypeContainerService,
-     retrieves their containers, and adds them to the containerCollectionType map.
+     * Scans for user-defined {@link CollectionTypeContainerService} implementations
+     * and registers their handlers in the collection type registry.
      */
     private void findLocalContainerForCollectionType() {
         ScanningForClassUtils.scanClassImplInterface(CollectionTypeContainerService.class, ElementCreationService.DEFAULT_LOCAL_CLASS_CREATION_PATH)
