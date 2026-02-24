@@ -6,7 +6,8 @@ import java.lang.reflect.Field;
 
 
 /**
- * class FillListCollection
+ * Generates a {@link java.util.List} by collecting elements from a stream produced by
+ * {@link CollectionTypeFill#fillCollectionStream}.
  */
 public class FillListCollection implements CollectionTypeFill {
 

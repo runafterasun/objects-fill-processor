@@ -10,19 +10,15 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 /**
-
- The DefaultCollectionTypeContainer class implements the CollectionTypeContainerService interface
-
- and provides a default implementation of the container for CollectionTypeFill instances.
-
- It contains mappings between Class objects and their respective CollectionTypeFill implementations.
+ * Default registry of {@link CollectionTypeFill} implementations for built-in collection types:
+ * List, Set, Map, and Stream.
  */
 public class DefaultCollectionTypeContainer implements CollectionTypeContainerService {
 
     private final Map<Class<?>, CollectionTypeFill> container;
-    /**
 
-     Constructs a new DefaultCollectionTypeContainer and initializes the container with default mappings.
+    /**
+     * Constructs the container and registers all built-in collection type handlers.
      */
     public DefaultCollectionTypeContainer() {
         container = new HashMap<>();
@@ -31,10 +27,9 @@ public class DefaultCollectionTypeContainer implements CollectionTypeContainerSe
         container.putIfAbsent(Set.class, new FillSetCollection());
         container.putIfAbsent(Stream.class, new FillRawStream());
     }
-    /**
 
-     Returns the container that holds the mappings between Class objects and CollectionTypeFill implementations.
-     @return The container.
+    /**
+     * {@inheritDoc}
      */
     public Map<Class<?>, CollectionTypeFill> getContainer() {
         return container;

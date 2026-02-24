@@ -16,12 +16,13 @@ import static ru.objectsfill.service.CollectionElementCreationService.getTypeCla
 import static ru.objectsfill.types.primitive_type.PrimitiveTypeName.*;
 
 /**
- * A necessary class for reflection to traverse fields.
+ * Callback that populates each field of an object with a randomly generated value during reflection traversal.
+ * Handles field exclusion, extended per-field parameters, and primitive array special-casing.
  */
 public record RandomValueFieldSetterCallback(Fill fill) implements FieldCallback {
 
     /**
-     * Function to check excluded fields.
+     * Curried function that checks whether a field is not in the excluded field list.
      */
     private static final Function<Field, Function<Fill, Boolean>> checkExcludedName =
             checkField ->
@@ -29,10 +30,11 @@ public record RandomValueFieldSetterCallback(Fill fill) implements FieldCallback
                             !fillObjectParam.getExcludedField().contains(checkField.getName());
 
     /**
-     * Overrides the method for field traversal.
+     * Processes a single field: skips final and excluded fields, applies extended parameters if present,
+     * and delegates to the appropriate generation method.
      *
-     * @param field The field to process.
-     * @throws IllegalAccessException If the field is inaccessible.
+     * @param field the field to populate
+     * @throws IllegalAccessException if the field cannot be accessed via reflection
      */
     @Override
     public void doWith(Field field) throws IllegalAccessException {
@@ -54,10 +56,11 @@ public record RandomValueFieldSetterCallback(Fill fill) implements FieldCallback
 
 
     /**
-     * split field fill
+     * Generates a value for the field using the default (unmodified) {@link Fill} parameters.
+     * If the field is a primitive array, delegates to {@link PrimitiveTypeName} for specialized handling.
      *
-     * @param field The field to process.
-     * @throws IllegalAccessException If the field is inaccessible.
+     * @param field the field to populate
+     * @throws IllegalAccessException if the field cannot be accessed via reflection
      */
     private void generateWithNoFillChange(Field field) throws IllegalAccessException {
         Class<?> type = getTypeClass(field, fill);
@@ -77,10 +80,12 @@ public record RandomValueFieldSetterCallback(Fill fill) implements FieldCallback
     }
 
     /**
-     * split field fill
+     * Generates a value for the field using the given {@link Fill} configuration
+     * and sets it on the target object via reflection.
      *
-     * @param field The field to process.
-     * @throws IllegalAccessException If the field is inaccessible.
+     * @param field                    the field to populate
+     * @param extendedParameterForField the {@link Fill} configuration (possibly with per-field overrides)
+     * @throws IllegalAccessException if the field cannot be accessed via reflection
      */
     private void generateExtendedValue(Field field, Fill extendedParameterForField) throws IllegalAccessException {
 
@@ -93,9 +98,11 @@ public record RandomValueFieldSetterCallback(Fill fill) implements FieldCallback
     }
 
     /**
-     * split field fill
+     * Builds a new {@link Fill} with per-field overrides (collection size, value length)
+     * from the matching {@link Extend} parameter, if one exists for the given field.
      *
-     * @param field The field to process.
+     * @param field the field to look up in the extended parameters list
+     * @return an {@link Optional} containing the customized {@link Fill}, or empty if no match
      */
     private Optional<Fill> getExtendedParameterForField(Field field) {
 
@@ -106,7 +113,7 @@ public record RandomValueFieldSetterCallback(Fill fill) implements FieldCallback
                         .excludeField(fill.getExcludedField())
                         .fieldParams(fill.getExtendedFieldParams())
                         .collectionSize(Optional.ofNullable(extendedFieldParameter.getCollectionSize()).orElse(fill.getCollectionSize()))
-                        .valueLength(Optional.ofNullable(extendedFieldParameter.getValueLength()).orElse(fill.getCollectionSize()))
+                        .valueLength(Optional.ofNullable(extendedFieldParameter.getValueLength()).orElse(fill.getValueLength()))
                         .setDeep(fill.getDeep())
                         .withGeneric(fill.getGenericType())
                         .gen()
@@ -115,10 +122,11 @@ public record RandomValueFieldSetterCallback(Fill fill) implements FieldCallback
     }
 
     /**
-     * get fields by class or name
+     * Returns a predicate that matches an {@link Extend} parameter to a field
+     * either by field name or by assignable class type.
      *
-     * @param field The field to process.
-     * @return get fields by class or name
+     * @param field the field to match against
+     * @return a predicate for filtering {@link Extend} parameters
      */
     public static Predicate<Extend> getExtendPredicate(Field field) {
         return fillFieldParameter -> {

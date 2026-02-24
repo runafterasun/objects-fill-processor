@@ -5,7 +5,8 @@ import ru.objectsfill.object_param.Fill;
 import java.util.stream.Stream;
 
 /**
- * Collection interface for filling objects
+ * Extension interface providing stream-based generation for boxed/wrapper types.
+ * Implemented by {@link ru.objectsfill.types.box_type.BoxTypeFill}.
  */
 public interface BoxCollectionFillExtension {
 
