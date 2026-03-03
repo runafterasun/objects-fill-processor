@@ -2,10 +2,11 @@ plugins {
     id 'signing'
     id 'maven-publish'
     id 'java'
+    id 'org.jreleaser' version '1.23.0'
 }
 
 group 'ru.objectsfill'
-version '0.1.1'
+version '0.1.4'
 
 repositories {
     mavenLocal()
@@ -18,8 +19,8 @@ dependencies {
     implementation 'org.javassist:javassist:3.30.2-GA'
 
 
-    implementation "org.apache.commons:commons-lang3:3.12.0"
-    testImplementation "org.apache.commons:commons-lang3:3.12.0"
+    implementation 'org.apache.commons:commons-lang3:3.18.0'
+    testImplementation 'org.apache.commons:commons-lang3:3.18.0'
 
 }
 
@@ -27,86 +28,88 @@ test {
     useJUnitPlatform()
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+    withSourcesJar()
+    withJavadocJar()
+}
+
 tasks.register('sourceJar', Jar) {
     from sourceSets.main.allJava
     archiveClassifier = "sources"
 }
 
-tasks.register('javadocJar', Jar) {
-    dependsOn javadoc
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-//publishing {
-//    publications {
-//        mavenJava(MavenPublication) {
-//            groupId = 'ru.objectsfill'
-//            artifactId = 'objects-fill-processor'
-//            version = "0.1.3"
-//            from components.java
-//        }
-//    }
-//    repositories {
-//        mavenLocal()
-//    }
-//}
 
 publishing {
     publications {
-        maven(MavenPublication) {publication ->
-            artifact sourceJar
-            artifact javadocJar
-            artifactId = "objects-fill-processor"
-            groupId = "ru.objectsfill"
-            version = "0.1.3"
-            from(components["java"])
-            pom {
-                packaging 'jar'
-                name.set("Objects Fill Processor")
-                url.set("https://github.com/runafterasun/objects-fill-processor")
-                description.set("Fill objects with random values")
+        maven(MavenPublication) {
+            groupId = 'ru.objectsfill'
+            artifactId = 'objects-fill-processor'
 
+            from components.java
+
+            pom {
+                name = 'objects-fill-processor'
+                description = 'Objects Fill Processor'
+                url = 'https://github.com/runafterasun/objects-fill-processor'
+                inceptionYear = '2026'
                 licenses {
                     license {
                         name.set("The Apache License, Version 2.0")
                         url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
                     }
                 }
-
-                scm {
-                    connection.set("scm:https://github.com/runafterasun/objects-fill-processor.git")
-                    developerConnection.set("scm:git@github.com:runafterasun/objects-fill-processor.git")
-                    url.set("https://github.com/runafterasun/objects-fill-processor")
-                }
-
                 developers {
                     developer {
-                        id.set("Stereo")
-                        name.set("Igor Saenko")
-                        email.set("runafterasun@gmail.com")
+                        id = 'Stereo'
+                        name = 'Igor Saenko'
+                        email = 'runafterasun@gmail.com'    // укажите email
                     }
+                }
+                scm {
+                    connection = 'scm:https://github.com/runafterasun/objects-fill-processor.git'
+                    developerConnection = 'scm:git@github.com:runafterasun/objects-fill-processor.git'
+                    url = 'https://github.com/runafterasun/java-xlsx'
                 }
             }
         }
     }
+
     repositories {
         maven {
-            URI releasesUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            URI snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            if (version.toString().endsWith("SNAPSHOT")) {
-                url = snapshotsUrl
-            } else {
-                url = releasesUrl
-            }
-            credentials {
-                username = project.properties["ossrhUsername"].toString()
-                password = project.properties["ossrhPassword"].toString()
-            }
+            url = layout.buildDirectory.dir('staging-deploy')
         }
     }
 }
 
-signing {
-    sign publishing.publications
+jreleaser {
+    signing {
+        active = 'ALWAYS'
+        armored = true
+        mode = 'FILE'
+        passphrase = findProperty('signing.password') ?: ''
+        publicKey = findProperty('signing.publicKey') ?: ''
+        secretKey = findProperty('signing.secretKey') ?: ''
+    }
+    release {
+        github {
+            skipRelease = true
+        }
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    active = 'ALWAYS'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    username = findProperty('ossrhUsername') ?: ''
+                    password = findProperty('ossrhPassword') ?: ''
+                    stagingRepository('build/staging-deploy')
+                }
+            }
+        }
+    }
 }
 

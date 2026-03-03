@@ -1,3 +1,6 @@
 /build/
 /.gradle/
 /.idea/
+
+### Secrets ###
+gradle.properties

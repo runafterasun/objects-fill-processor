@@ -1,7 +1,7 @@
 # Object Fill With Random Value
 ## How to use
 From maven central <br>
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/ru.objectsfill/objects-fill-processor/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ru.objectsfill/objects-fill-processor)
+[![Latest Release](https://maven-badges.sml.io/sonatype-central/ru.objectsfill/objects-fill-processor/badge.svg?subject=Latest%20Release&color=blue)](https://central.sonatype.com/artifact/ru.objectsfill/objects-fill-processor)
 ![Build Status](https://github.com/runafterasun/objects-fill-processor/actions/workflows/gradle.yml/badge.svg)
 
 ```xml
